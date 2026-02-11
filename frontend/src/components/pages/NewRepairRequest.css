@@ -1,0 +1,295 @@
+/* ===== CONTAINER WRAPPER ===== */
+.new-repair-page {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.new-repair-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+/* ===== HEADER SECTION ===== */
+.new-repair-header {
+  margin-bottom: 30px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 15px;
+}
+
+.new-repair-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+/* ===== FORM GROUPS ===== */
+.new-repair-form-group {
+  margin-bottom: 25px;
+}
+
+.new-repair-label {
+  display: block;
+  font-weight: 600;
+  font-size: 16px;
+  color: #34495e;
+  margin-bottom: 10px;
+}
+
+/* ===== TEXTAREA - สีขาวพื้นหลัง ตัวอักษรดำ ===== */
+.new-repair-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px 16px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+
+  /* ✅ สีขาวพื้นหลัง ตัวอักษรดำ */
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.new-repair-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.new-repair-textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* ===== FILE UPLOAD SECTION ===== */
+.new-repair-file-wrapper {
+  position: relative;
+  width: 100%;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #f9fafb;
+  transition: all 0.3s ease;
+}
+
+.new-repair-file-wrapper:hover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.new-repair-file-input {
+  display: none;
+}
+
+.new-repair-file-trigger {
+  display: block;
+  cursor: pointer;
+  width: 100%;
+  min-height: 200px;
+}
+
+/* ===== UPLOAD PLACEHOLDER ===== */
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  min-height: 200px;
+}
+
+.upload-placeholder .icon {
+  font-size: 64px;
+  margin-bottom: 15px;
+  opacity: 0.7;
+}
+
+.upload-placeholder .text {
+  font-size: 16px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* ===== IMAGE PREVIEW CONTAINER - ครอบรูปให้อยู่ในกรอบ ===== */
+.image-preview-container {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  overflow: hidden;
+  position: relative;
+}
+
+.image-preview-on-form {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.file-success-text {
+  margin-top: 10px;
+  color: #10b981;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* ===== MAP PICKER SECTION ===== */
+.map-picker-container {
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 400px;
+  background-color: #f9fafb;
+}
+
+.new-repair-position-info {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background-color: #eff6ff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1e40af;
+  font-weight: 500;
+}
+
+/* ===== BUILDING INFO SECTION ===== */
+.new-repair-building-info {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background-color: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #92400e;
+  font-weight: 500;
+}
+
+.new-repair-location-details {
+  margin-top: 12px;
+  padding: 16px;
+  background-color: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+}
+
+.new-repair-building-header {
+  font-weight: 700;
+  font-size: 16px;
+  color: #166534;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #86efac;
+}
+
+.new-repair-detail-row {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #166534;
+}
+
+.new-repair-detail-row strong {
+  color: #14532d;
+  margin-right: 6px;
+}
+
+.new-repair-address-row {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #86efac;
+  font-size: 13px;
+  color: #166534;
+  line-height: 1.5;
+}
+
+.new-repair-address-row strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #14532d;
+}
+
+/* ===== BUTTON GROUP ===== */
+.new-repair-button-group {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.new-repair-submit-btn,
+.new-repair-cancel-btn {
+  flex: 1;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.new-repair-submit-btn {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+}
+
+.new-repair-submit-btn:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+}
+
+.new-repair-submit-btn:disabled {
+  background: #9CA3AF;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.new-repair-cancel-btn {
+  background-color: white;
+  color: var(--text-main);
+  border: 1px solid #D1D5DB;
+}
+
+.new-repair-cancel-btn:hover {
+  background-color: #F9FAFB;
+  border-color: #9CA3AF;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .new-repair-page {
+    padding: 10px;
+  }
+
+  .new-repair-card {
+    padding: 20px;
+  }
+
+  .new-repair-title {
+    font-size: 24px;
+  }
+
+  .new-repair-button-group {
+    flex-direction: column;
+  }
+
+  .map-picker-container {
+    height: 300px;
+  }
+
+  .image-preview-container {
+    height: 250px;
+  }
+}
