@@ -64,12 +64,13 @@ router.put('/:userId', async (req, res) => {
            phone = $3, 
            student_id_staff_id = $4, 
            department = $5,
+           role = $6,
            updated_at = NOW()
-       WHERE user_id = $6
+       WHERE user_id = $7
        RETURNING user_id, username, first_name, email, phone, 
                  student_id_staff_id, role, department, 
                  created_at, updated_at`,
-      [first_name, email, phone, student_id_staff_id, department, userId]
+      [first_name, email, phone, student_id_staff_id, department, req.body.role || 'user', userId]
     );
 
     if (result.rows.length === 0) {

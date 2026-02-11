@@ -5,30 +5,165 @@
 
 /* Header styles removed as partial header is removed from JSX */
 
-.reports-actions {
-    /* Style for the container holding the export button */
+/* ========== ACTIONS ========== */
+.no-print {
+    display: block;
+}
+
+.print-only {
+    display: none;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+
+    @page {
+        size: A4;
+        margin: 1.5cm 1.5cm 1.5cm 2.5cm;
+        /* Standard Thai Government Margins (Left 2.5cm) */
+    }
+
+    body {
+        background: white !important;
+        font-family: "TH Sarabun New", "Sarabun", sans-serif !important;
+        font-size: 16pt;
+        line-height: 1.2;
+    }
+
+    .reports-container {
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Official Memo (Print Only) Styles */
+.memo-wrapper {
+    color: black;
+    line-height: 1.5;
+}
+
+.memo-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.garuda-container {
+    margin-bottom: 10px;
+}
+
+.garuda-img {
+    width: 60px;
+    /* Standard Garuda size for memo */
+    height: auto;
+}
+
+.memo-header h1 {
+    font-size: 24pt;
+    font-weight: bold;
+    margin: 0;
+}
+
+.memo-info {
+    border-bottom: 1px solid black;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.memo-info p {
+    margin: 5px 0;
+}
+
+.memo-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.memo-body {
+    margin-top: 20px;
+}
+
+.memo-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.memo-table th,
+.memo-table td {
+    border: 1px solid black;
+    padding: 8px 12px;
+}
+
+.memo-table th {
+    background-color: #f2f2f2 !important;
+    font-weight: bold;
+    -webkit-print-color-adjust: exact;
+}
+
+.row-total {
+    background-color: #f9f9f9 !important;
+    -webkit-print-color-adjust: exact;
+}
+
+.memo-signature {
+    margin-top: 50px;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.signature-box {
+    margin-top: 40px;
+    text-align: center;
+    width: 300px;
+}
+
+.icon-gap {
+    margin-right: 8px;
+}
+
+.export-btn,
+.print-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+    font-family: inherit;
+    font-size: 14px;
 }
 
 .export-btn {
-    background: white;
-    border: 1px solid #e5e7eb;
-    /* var(--border-color) */
-    color: #64748b;
-    /* var(--text-gray) */
-    padding: 10px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
+    background: #10b981;
 }
 
 .export-btn:hover {
-    border-color: #3b82f6;
-    color: #3b82f6;
-    background: #eff6ff;
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.print-btn {
+    background: #475569;
+}
+
+.print-btn:hover {
+    background: #334155;
+    transform: translateY(-1px);
 }
 
 /* ========== SUMMARY CARDS ========== */

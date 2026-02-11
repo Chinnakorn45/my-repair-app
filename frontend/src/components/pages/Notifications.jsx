@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { formatTimeAgo } from '../../utils/dateUtils';
 import './Notifications.css';
 
 const Notifications = () => {
@@ -36,7 +37,7 @@ const Notifications = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       setNotifications(prev =>
         prev.map(notif =>
           notif.id === notificationId ? { ...notif, is_read: true } : notif
@@ -56,7 +57,7 @@ const Notifications = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       setNotifications(prev =>
         prev.map(notif => ({ ...notif, is_read: true }))
       );
@@ -74,7 +75,7 @@ const Notifications = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       setNotifications(prev => prev.filter(notif => notif.id !== notificationId));
     } catch (error) {
       console.error('Error deleting notification:', error);
@@ -100,17 +101,7 @@ const Notifications = () => {
     }
   };
 
-  const getTimeAgo = (timestamp) => {
-    const now = new Date();
-    const time = new Date(timestamp);
-    const diffInSeconds = Math.floor((now - time) / 1000);
 
-    if (diffInSeconds < 60) return 'เมื่อสักครู่';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} นาทีที่แล้ว`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} ชั่วโมงที่แล้ว`;
-    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} วันที่แล้ว`;
-    return time.toLocaleDateString('th-TH');
-  };
 
   const filteredNotifications = notifications.filter(notif => {
     if (filter === 'unread') return !notif.is_read;
@@ -184,7 +175,7 @@ const Notifications = () => {
               <div className="notification-content">
                 <div className="notification-title">{notif.title}</div>
                 <div className="notification-message">{notif.message}</div>
-                <div className="notification-time">{getTimeAgo(notif.created_at)}</div>
+                <div className="notification-time">{formatTimeAgo(notif.created_at)}</div>
               </div>
               <button
                 className="delete-btn"

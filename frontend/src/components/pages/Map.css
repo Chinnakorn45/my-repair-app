@@ -405,19 +405,24 @@
 }
 
 /* Custom Marker Animation */
-.custom-marker {
-  animation: bounce 2s infinite;
+.custom-marker-wrapper {
+  background: none !important;
+  border: none !important;
 }
 
-@keyframes bounce {
+.custom-marker-wrapper>div {
+  animation: markerBounce 2s infinite;
+}
+
+@keyframes markerBounce {
 
   0%,
   100% {
-    transform: translateY(0);
+    margin-bottom: 0;
   }
 
   50% {
-    transform: translateY(-10px);
+    margin-bottom: 10px;
   }
 }
 

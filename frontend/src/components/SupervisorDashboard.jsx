@@ -301,12 +301,7 @@ function SupervisorDashboard({ userId, onLogout }) {
             {activeMenu === 'notifications' && <><Bell size={28} className="icon-gap" /> การแจ้งเตือน</>}
             {activeMenu === 'profile' && <><User size={28} className="icon-gap" /> โปรไฟล์</>}
           </h1>
-          <div className="header-actions">
-            <button className="notification-btn">
-              <Bell size={20} />
-              <span className="notification-badge"></span>
-            </button>
-          </div>
+
         </div>
 
         <div className="container">

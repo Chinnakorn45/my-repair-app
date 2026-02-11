@@ -3,6 +3,7 @@ import {
     BarChart2, TrendingUp, Download,
     CheckCircle, Clock, AlertCircle, RefreshCw
 } from 'lucide-react';
+import { formatThaiDate, formatThaiMonth } from '../../utils/dateUtils';
 import './Reports.css';
 
 const Reports = () => {
@@ -54,29 +55,38 @@ const Reports = () => {
     };
 
     const handleExport = () => {
-        // Simple CSV Export implementation
+        // Thai CSV Export implementation
         const csvContent = [
-            ['Report Type', 'Date', new Date().toLocaleDateString()],
+            ['ประเภทรายงาน', 'สรุปรายงานการซ่อมบำรุง'],
+            ['วันที่ออกรายงาน', formatThaiDate(new Date())],
             [''],
-            ['Summary Stats'],
-            ['Total Requests', summary?.total],
-            ['Pending', summary?.status.pending],
-            ['In Progress', summary?.status.in_progress],
-            ['Completed', summary?.status.completed],
+            ['สรุปสถิติรวม'],
+            ['จำนวนงานทั้งหมด', summary?.total],
+            ['รอดำเนินการ', summary?.status.pending],
+            ['กำลังดำเนินการ', summary?.status.in_progress],
+            ['เสร็จสมบูรณ์', summary?.status.completed],
             [''],
-            ['Technician Performance'],
-            ['Name', 'Total Tasks', 'Completed', 'Active'],
-            ...techPerformance.map(t => [t.name, t.total_tasks, t.completed_tasks, t.active_tasks])
+            ['สถิติแยกตามตึก (5 อันดับแรก)'],
+            ['ตึก/อาคาร', 'จำนวนงาน'],
+            ...buildingStats.map(b => [b.name, b.count]),
+            [''],
+            ['ประสิทธิภาพทีมช่าง'],
+            ['ชื่อช่าง', 'งานทั้งหมด', 'กำลังทำ', 'เสร็จสิ้น'],
+            ...techPerformance.map(t => [t.name, t.total_tasks, t.active_tasks, t.completed_tasks])
         ].map(e => e.join(',')).join('\n');
 
         const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
-        link.setAttribute("download", `repair_report_${new Date().toISOString().slice(0, 10)}.csv`);
+        link.setAttribute("download", `รายงานการซ่อม_${new Date().toISOString().slice(0, 10)}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    };
+
+    const handlePrint = () => {
+        window.print();
     };
 
     if (loading) {
@@ -104,139 +114,240 @@ const Reports = () => {
 
     return (
         <div className="reports-container">
-            <div className="reports-actions" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 20 }}>
+            {/* Hidden Print Wrapper */}
+            <div className="print-only memo-wrapper">
+                <div className="memo-header">
+                    <div className="garuda-container">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Garuda_Emb_of_Thailand_%28vector%29.svg/512px-Garuda_Emb_of_Thailand_%28vector%29.svg.png" alt="Garuda" className="garuda-img" />
+                    </div>
+                    <h1>บันทึกข้อความ</h1>
+                </div>
+                <div className="memo-info">
+                    <p><strong>ส่วนราชการ:</strong> ศูนย์ซ่อมบำรุงและบริการ (IT Support & Maintenance Center)</p>
+                    <div className="memo-row">
+                        <p><strong>ที่:</strong> ............................................................</p>
+                        <p><strong>วันที่:</strong> {formatThaiDate(new Date())}</p>
+                    </div>
+                    <p><strong>เรื่อง:</strong> สรุปรายงานสถานะการแจ้งซ่อมและประสิทธิภาพการปฏิบัติงาน</p>
+                </div>
+                <div className="memo-body">
+                    <p>เรียน หัวหน้าส่วนงาน / ผู้เกี่ยวข้อง</p>
+                    <p style={{ textIndent: '2.5cm', marginBottom: '1cm' }}>
+                        ตามที่มีการดำเนินงานแจ้งซ่อมผ่านระบบออนไลน์ ศูนย์ซ่อมบำรุงได้ดำเนินการสรุปผลการปฏิบัติงาน
+                        ณ วันที่ {formatThaiDate(new Date())} โดยมีรายละเอียดสถิติจำนวนงานและประสิทธิภาพทีมช่างดังนี้:
+                    </p>
+
+                    <h4>1. สรุปสถานะงานซ่อมทั้งหมด</h4>
+                    <table className="memo-table">
+                        <thead>
+                            <tr>
+                                <th>สถานะ</th>
+                                <th className="text-right">จำนวนงาน</th>
+                                <th>หมายเหตุ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>รอดำเนินการ (Pending)</td>
+                                <td className="text-right">{summary?.status.pending || 0}</td>
+                                <td>อยู่ระหว่างรอการจัดสรรช่าง</td>
+                            </tr>
+                            <tr>
+                                <td>กำลังดำเนินการ (In Progress)</td>
+                                <td className="text-right">{summary?.status.in_progress || 0}</td>
+                                <td>ช่างกำลังรับดำเนินการหรือรออะไหล่</td>
+                            </tr>
+                            <tr>
+                                <td>เสร็จสิ้น (Completed)</td>
+                                <td className="text-right">{summary?.status.completed || 0}</td>
+                                <td>ดำเนินการเสร็จสิ้นเรียบร้อยแล้ว</td>
+                            </tr>
+                            <tr className="row-total">
+                                <td><strong>รวมทั้งสิ้น</strong></td>
+                                <td className="text-right"><strong>{summary?.total || 0}</strong></td>
+                                <td><strong>รายการ</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 style={{ marginTop: '1cm' }}>2. ประสิทธิภาพการดำเนินงานของทีมช่าง</h4>
+                    <table className="memo-table">
+                        <thead>
+                            <tr>
+                                <th>ลำดับ</th>
+                                <th>ชื่อ-นามสกุล</th>
+                                <th className="text-center">รับงาน</th>
+                                <th className="text-center">เสร็จสิ้น</th>
+                                <th className="text-center">คิดเป็นร้อยละ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {techPerformance.map((tech, idx) => {
+                                const total = parseInt(tech.total_tasks) || 0;
+                                const completed = parseInt(tech.completed_tasks) || 0;
+                                const rate = total > 0 ? ((completed / total) * 100).toFixed(1) : 0;
+                                return (
+                                    <tr key={idx}>
+                                        <td className="text-center">{idx + 1}</td>
+                                        <td>{tech.name}</td>
+                                        <td className="text-center">{total}</td>
+                                        <td className="text-center">{completed}</td>
+                                        <td className="text-center">{rate}%</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+
+                    <div className="memo-signature">
+                        <p>จึงเรียนมาเพื่อโปรดทราบและพิจารณา</p>
+                        <div className="signature-box">
+                            <p>(........................................................)</p>
+                            <p>ตำแหน่ง ....................................................</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="reports-actions no-print" style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginBottom: 20 }}>
                 <button className="export-btn" onClick={handleExport}>
                     <Download size={16} className="icon-gap" /> ส่งออก CSV
                 </button>
+                <button className="print-btn" onClick={handlePrint} style={{ background: '#475569' }}>
+                    <BarChart2 size={16} className="icon-gap" /> พิมพ์สรุปรายงาน (PDF)
+                </button>
             </div>
 
-            {/* Summary Cards */}
-            <div className="summary-cards">
-                <div className="summary-card total">
-                    <div className="card-icon"><BarChart2 size={24} /></div>
-                    <div className="card-data">
-                        <h3>{summary?.total || 0}</h3>
-                        <p>งานทั้งหมด</p>
+            {/* Existing Dashboard View */}
+            <div className="dashboard-content no-print">
+                {/* Summary Cards */}
+                <div className="summary-cards">
+                    <div className="summary-card total">
+                        <div className="card-icon"><BarChart2 size={24} /></div>
+                        <div className="card-data">
+                            <h3>{summary?.total || 0}</h3>
+                            <p>งานทั้งหมด</p>
+                        </div>
+                    </div>
+                    <div className="summary-card pending">
+                        <div className="card-icon"><Clock size={24} /></div>
+                        <div className="card-data">
+                            <h3>{summary?.status.pending || 0}</h3>
+                            <p>รอดำเนินการ</p>
+                        </div>
+                    </div>
+                    <div className="summary-card ongoing">
+                        <div className="card-icon"><RefreshCw size={24} /></div>
+                        <div className="card-data">
+                            <h3>{summary?.status.in_progress || 0}</h3>
+                            <p>กำลังซ่อม</p>
+                        </div>
+                    </div>
+                    <div className="summary-card completed">
+                        <div className="card-icon"><CheckCircle size={24} /></div>
+                        <div className="card-data">
+                            <h3>{summary?.status.completed || 0}</h3>
+                            <p>เสร็จสิ้น</p>
+                        </div>
                     </div>
                 </div>
-                <div className="summary-card pending">
-                    <div className="card-icon"><Clock size={24} /></div>
-                    <div className="card-data">
-                        <h3>{summary?.status.pending || 0}</h3>
-                        <p>รอดำเนินการ</p>
-                    </div>
-                </div>
-                <div className="summary-card ongoing">
-                    <div className="card-icon"><RefreshCw size={24} /></div>
-                    <div className="card-data">
-                        <h3>{summary?.status.in_progress || 0}</h3>
-                        <p>กำลังซ่อม</p>
-                    </div>
-                </div>
-                <div className="summary-card completed">
-                    <div className="card-icon"><CheckCircle size={24} /></div>
-                    <div className="card-data">
-                        <h3>{summary?.status.completed || 0}</h3>
-                        <p>เสร็จสิ้น</p>
-                    </div>
-                </div>
-            </div>
 
-            <div className="charts-grid two-columns">
-                {/* Building Stats (Simple Bar Chart) */}
-                <div className="chart-card">
-                    <div className="chart-header">
-                        <h3>📍 สถิติการแจ้งซ่อมตามตึก (5 อันดับแรก)</h3>
-                    </div>
-                    <div className="chart-body">
-                        {buildingStats.length === 0 ? <p className="no-data">ไม่มีข้อมูล</p> : (
-                            <div className="simple-bar-chart">
-                                {buildingStats.map((item, index) => (
-                                    <div key={index} className="bar-row">
-                                        <span className="bar-label">{item.name}</span>
-                                        <div className="bar-track">
-                                            <div
-                                                className="bar-fill"
-                                                style={{ width: `${(item.count / maxBuildingCount) * 100}%` }}
-                                            ></div>
+                <div className="charts-grid two-columns">
+                    {/* Building Stats (Simple Bar Chart) */}
+                    <div className="chart-card">
+                        <div className="chart-header">
+                            <h3>📍 สถิติการแจ้งซ่อมตามตึก (5 อันดับแรก)</h3>
+                        </div>
+                        <div className="chart-body">
+                            {buildingStats.length === 0 ? <p className="no-data">ไม่มีข้อมูล</p> : (
+                                <div className="simple-bar-chart">
+                                    {buildingStats.map((item, index) => (
+                                        <div key={index} className="bar-row">
+                                            <span className="bar-label">{item.name}</span>
+                                            <div className="bar-track">
+                                                <div
+                                                    className="bar-fill"
+                                                    style={{ width: `${(item.count / maxBuildingCount) * 100}%` }}
+                                                ></div>
+                                            </div>
+                                            <span className="bar-value">{item.count}</span>
                                         </div>
-                                        <span className="bar-value">{item.count}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
 
-                {/* Monthly Trends (Simple Column Chart) */}
-                <div className="chart-card">
-                    <div className="chart-header">
-                        <h3>📅 แนวโน้มงานซ่อมรายเดือน</h3>
-                    </div>
-                    <div className="chart-body">
-                        {monthlyTrends.length === 0 ? <p className="no-data">ไม่มีข้อมูล</p> : (
-                            <div className="simple-column-chart">
-                                {monthlyTrends.map((item, index) => (
-                                    <div key={index} className="column-item">
-                                        <div className="column-track">
-                                            <div
-                                                className="column-fill"
-                                                style={{ height: `${(item.count / maxTrendCount) * 100}%` }}
-                                                title={`${item.count} งาน`}
-                                            ></div>
+                    {/* Monthly Trends (Simple Column Chart) */}
+                    <div className="chart-card">
+                        <div className="chart-header">
+                            <h3>📅 แนวโน้มงานซ่อมรายเดือน</h3>
+                        </div>
+                        <div className="chart-body">
+                            {monthlyTrends.length === 0 ? <p className="no-data">ไม่มีข้อมูล</p> : (
+                                <div className="simple-column-chart">
+                                    {monthlyTrends.map((item, index) => (
+                                        <div key={index} className="column-item">
+                                            <div className="column-track">
+                                                <div
+                                                    className="column-fill"
+                                                    style={{ height: `${(item.count / maxTrendCount) * 100}%` }}
+                                                    title={`${item.count} งาน`}
+                                                ></div>
+                                            </div>
+                                            <span className="column-label">{formatThaiMonth(item.month)}</span>
                                         </div>
-                                        <span className="column-label">{item.month}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="charts-grid full-width">
-                {/* Technician Performance Table */}
-                <div className="chart-card">
-                    <div className="chart-header">
-                        <h3>👷 ประสิทธิภาพทีมช่าง</h3>
-                    </div>
-                    <div className="chart-body">
-                        <div className="table-responsive">
-                            <table className="tech-table">
-                                <thead>
-                                    <tr>
-                                        <th>ชื่อช่าง</th>
-                                        <th className="text-center">งานทั้งหมด</th>
-                                        <th className="text-center">กำลังทำ</th>
-                                        <th className="text-center">เสร็จสิ้น</th>
-                                        <th className="text-center">อัตราสำเร็จ</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {techPerformance.length === 0 ? (
-                                        <tr><td colSpan="5" className="text-center">ไม่มีข้อมูล</td></tr>
-                                    ) : techPerformance.map((tech, idx) => {
-                                        const total = parseInt(tech.total_tasks) || 0;
-                                        const completed = parseInt(tech.completed_tasks) || 0;
-                                        const successRate = total > 0 ? ((completed / total) * 100).toFixed(0) : 0;
+                <div className="charts-grid full-width">
+                    {/* Technician Performance Table */}
+                    <div className="chart-card">
+                        <div className="chart-header">
+                            <h3>👷 ประสิทธิภาพทีมช่าง</h3>
+                        </div>
+                        <div className="chart-body">
+                            <div className="table-responsive">
+                                <table className="tech-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ชื่อช่าง</th>
+                                            <th className="text-center">งานทั้งหมด</th>
+                                            <th className="text-center">กำลังทำ</th>
+                                            <th className="text-center">เสร็จสิ้น</th>
+                                            <th className="text-center">อัตราสำเร็จ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {techPerformance.length === 0 ? (
+                                            <tr><td colSpan="5" className="text-center">ไม่มีข้อมูล</td></tr>
+                                        ) : techPerformance.map((tech, idx) => {
+                                            const total = parseInt(tech.total_tasks) || 0;
+                                            const completed = parseInt(tech.completed_tasks) || 0;
+                                            const successRate = total > 0 ? ((completed / total) * 100).toFixed(0) : 0;
 
-                                        return (
-                                            <tr key={idx}>
-                                                <td>{tech.name}</td>
-                                                <td className="text-center">{total}</td>
-                                                <td className="text-center">{tech.active_tasks}</td>
-                                                <td className="text-center success-text">{completed}</td>
-                                                <td className="text-center">
-                                                    <div className="progress-mini">
-                                                        <div className="progress-bar-mini" style={{ width: `${successRate}%` }}></div>
-                                                    </div>
-                                                    <span className="progress-text">{successRate}%</span>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
+                                            return (
+                                                <tr key={idx}>
+                                                    <td>{tech.name}</td>
+                                                    <td className="text-center">{total}</td>
+                                                    <td className="text-center">{tech.active_tasks}</td>
+                                                    <td className="text-center success-text">{completed}</td>
+                                                    <td className="text-center">
+                                                        <div className="progress-mini">
+                                                            <div className="progress-bar-mini" style={{ width: `${successRate}%` }}></div>
+                                                        </div>
+                                                        <span className="progress-text">{successRate}%</span>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

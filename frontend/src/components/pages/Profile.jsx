@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 import {
   User, Mail, Phone, IdCard, Building, Calendar, Edit, Save, X, CheckCircle, AlertCircle
 } from 'lucide-react';
+import { formatThaiDate } from '../../utils/dateUtils';
 import './Profile.css';
 
 const Profile = ({ userId }) => {
@@ -215,11 +216,7 @@ const Profile = ({ userId }) => {
 
                 <div className="info-item">
                   <label><Calendar size={16} /> สมัครเมื่อ</label>
-                  <p>{new Date(user.created_at).toLocaleDateString('th-TH', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}</p>
+                  <p>{formatThaiDate(user.created_at, 'long')}</p>
                 </div>
               </div>
             </div>

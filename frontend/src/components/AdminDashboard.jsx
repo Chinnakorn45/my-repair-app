@@ -5,9 +5,9 @@ import './AdminDashboard.css';
 import AnnouncementManager from './pages/AnnouncementManager';
 
 import {
-  Users, Building, FileText, Settings, Bell, User, LayoutDashboard,
-  Search, Filter, MapPin, Trash2, Edit, Plus, LogOut, Shield, Wrench, Briefcase, Menu,
-  ClipboardList, Clock, TrendingUp
+  Users, Building, FileText, Settings as SettingsIcon, Bell, User, LayoutDashboard,
+  Search, Filter, MapPin, Trash, Pencil, UserPlus, LogOut, Shield, Wrench, Briefcase, Menu,
+  ClipboardList, Clock, TrendingUp, Mail, Phone, Save, X
 } from 'lucide-react';
 
 import TaskList from './TaskList';
@@ -15,6 +15,7 @@ import MapComponent from './pages/Map';
 import History from './pages/History';
 import Reports from './pages/Reports';
 import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 
 const BuildingManager = lazy(() => import('./BuildingManager'));
 
@@ -134,33 +135,99 @@ export default function AdminDashboard({ userId, onLogout }) {
     }
   };
 
+  useEffect(() => {
+    if (selectedUser) {
+      setNewUser({
+        username: selectedUser.username,
+        password: '', // Password not editable here
+        email: selectedUser.email,
+        first_name: selectedUser.first_name,
+        student_id_staff_id: selectedUser.student_id_staff_id,
+        role: selectedUser.role,
+        department: selectedUser.department,
+        tel: selectedUser.phone || '' // Map phone to tel
+      });
+    } else {
+      setNewUser({
+        username: '', password: '', email: '', first_name: '',
+        student_id_staff_id: '', role: 'user', department: '', tel: ''
+      });
+    }
+  }, [selectedUser]);
+
   const handleCreateUser = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/users/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(newUser)
-      });
 
-      if (response.ok) {
-        Swal.fire('สำเร็จ', 'เพิ่มผู้ใช้งานเรียบร้อยแล้ว', 'success');
-        setShowAddUserModal(false);
-        setNewUser({
-          username: '', password: '', email: '', first_name: '',
-          student_id_staff_id: '', role: 'user', department: '', tel: ''
+      if (selectedUser) {
+        // Edit Mode
+        // Use Admin API for security
+        const response = await fetch(`http://localhost:5000/api/admin/users/${selectedUser.user_id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            username: newUser.username,
+            first_name: newUser.first_name,
+            email: newUser.email,
+            phone: newUser.tel,
+            student_id_staff_id: newUser.student_id_staff_id,
+            department: newUser.department,
+            role: newUser.role
+          })
         });
-        fetchUsers();
+
+        if (response.ok) {
+          Swal.fire('สำเร็จ', 'แก้ไขข้อมูลผู้ใช้งานเรียบร้อยแล้ว', 'success');
+          setShowAddUserModal(false);
+          setSelectedUser(null);
+          // Refresh data
+          fetchUsers();
+          // Optionally fetch from admin endpoint if strictly admin
+          // fetchAdminUsers(); 
+        } else {
+          const errorData = await response.json();
+          Swal.fire('Error', errorData.message || 'ไม่สามารถแก้ไขข้อมูลได้', 'error');
+        }
       } else {
-        const errorData = await response.json();
-        Swal.fire('Error', errorData.message || 'ไม่สามารถเพิ่มผู้ใช้งานได้', 'error');
+        // Create Mode
+        // Use Admin API
+        const response = await fetch('http://localhost:5000/api/admin/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            username: newUser.username,
+            password: newUser.password,
+            first_name: newUser.first_name,
+            email: newUser.email,
+            phone: newUser.tel,
+            student_id_staff_id: newUser.student_id_staff_id,
+            department: newUser.department,
+            role: newUser.role
+          })
+        });
+
+        if (response.ok) {
+          Swal.fire('สำเร็จ', 'เพิ่มผู้ใช้งานเรียบร้อยแล้ว', 'success');
+          setShowAddUserModal(false);
+          setNewUser({
+            username: '', password: '', email: '', first_name: '',
+            student_id_staff_id: '', role: 'user', department: '', tel: ''
+          });
+          fetchUsers();
+        } else {
+          const errorData = await response.json();
+          Swal.fire('Error', errorData.message || 'ไม่สามารถเพิ่มผู้ใช้งานได้', 'error');
+        }
       }
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error('Error saving user:', error);
       Swal.fire('Error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
     }
   };
@@ -180,7 +247,8 @@ export default function AdminDashboard({ userId, onLogout }) {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+        // Use Admin API
+        const response = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -254,7 +322,7 @@ export default function AdminDashboard({ userId, onLogout }) {
             {activeMenu === 'users' && <><Users size={28} className="icon-gap" /> จัดการผู้ใช้งานและสิทธิ์</>}
             {activeMenu === 'buildings' && <><Building size={28} className="icon-gap" /> จัดการข้อมูลตึก</>}
             {activeMenu === 'history' && <><Clock size={28} className="icon-gap" /> ประวัติระบบ</>}
-            {activeMenu === 'settings' && <><Settings size={28} className="icon-gap" /> ตั้งค่า</>}
+            {activeMenu === 'settings' && <><SettingsIcon size={28} className="icon-gap" /> ตั้งค่า</>}
             {activeMenu === 'notifications' && <><Bell size={28} className="icon-gap" /> จัดการข่าวสาร/ประกาศ</>}
             {activeMenu === 'profile' && <><User size={28} className="icon-gap" /> โปรไฟล์</>}
           </h1>
@@ -300,49 +368,79 @@ export default function AdminDashboard({ userId, onLogout }) {
 
 
 
-            {/* Users List */}
-            <div className="users-list">
-              {loading ? (
-                <p className="loading">กำลังโหลด...</p>
-              ) : filteredUsers.length === 0 ? (
-                <p className="empty">ไม่พบผู้ใช้งาน</p>
-              ) : (
-                filteredUsers.map(user => (
-                  <div key={user.user_id} className="user-item">
-                    <div className="user-info">
-                      <div className="user-avatar">
-                        {user.first_name.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="user-details">
-                        <div className="user-header">
-                          <h3>{user.first_name}</h3>
+            {/* Users Table */}
+            <div className="users-table-container">
+              <table className="users-table">
+                <thead>
+                  <tr>
+                    <th>ผู้ใช้งาน</th>
+                    <th>ตำแหน่ง</th>
+                    <th>สังกัด/หน่วยงาน</th>
+                    <th>ติดต่อ</th>
+                    <th>จัดการ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="5" className="loading-cell">
+                        <div className="spinner-small"></div> กำลังโหลดข้อมูล...
+                      </td>
+                    </tr>
+                  ) : filteredUsers.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="empty-cell">ไม่พบข้อมูลผู้ใช้งาน</td>
+                    </tr>
+                  ) : (
+                    filteredUsers.map(user => (
+                      <tr key={user.user_id}>
+                        <td>
+                          <div className="user-cell-info">
+                            <div className="user-avatar-small">
+                              {user.first_name.charAt(0).toUpperCase()}
+                            </div>
+                            <div className="user-text">
+                              <span className="user-name">{user.first_name}</span>
+                              <span className="user-username">@{user.username}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
                           <span className={`role-badge ${getRoleBadgeColor(user.role)}`}>
                             {getRoleLabel(user.role)}
                           </span>
-                        </div>
-                        <p className="user-department">{user.department || 'ไม่ระบุ'}</p>
-                        <p className="user-email">{user.email}</p>
-                      </div>
-                    </div>
-                    <div className="user-actions">
-                      <button className="action-button edit" onClick={() => { setSelectedUser(user); setShowAddUserModal(true); }}>
-                        <Edit size={16} />
-                      </button>
-                      <button className="action-button delete" onClick={() => handleDeleteUser(user.user_id)}>
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
+                        </td>
+                        <td>{user.department || '-'}</td>
+                        <td>
+                          <div className="contact-info">
+                            {user.email && <div className="contact-item"><Mail size={14} /> {user.email}</div>}
+                            {user.tel && <div className="contact-item"><Phone size={14} /> {user.tel}</div>}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="action-buttons">
+                            <button className="action-btn edit" onClick={() => { setSelectedUser(user); setShowAddUserModal(true); }} title="แก้ไข">
+                              <Pencil size={18} />
+                            </button>
+                            <button className="action-btn delete" onClick={() => handleDeleteUser(user.user_id)} title="ลบ">
+                              <Trash size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
 
             {/* Add User FAB */}
             <button
               className="fab"
               onClick={() => { setSelectedUser(null); setShowAddUserModal(true); }}
+              title="เพิ่มผู้ใช้งานใหม่"
             >
-              <Plus size={24} />
+              <UserPlus size={32} strokeWidth={2.5} />
             </button>
           </>
         )}
@@ -359,7 +457,13 @@ export default function AdminDashboard({ userId, onLogout }) {
 
         {activeMenu === 'history' && <History />}
 
-        {activeMenu === 'profile' && <Profile userId={userId} />}
+        {activeMenu === 'profile' && (
+          <div className="content-wrapper">
+            <Profile userId={userId} />
+          </div>
+        )}
+
+        {activeMenu === 'settings' && <Settings />}
 
       </main>
 
@@ -377,19 +481,108 @@ export default function AdminDashboard({ userId, onLogout }) {
           <div className="modal-content">
             <h2>{selectedUser ? 'แก้ไขผู้ใช้งาน' : 'เพิ่มผู้ใช้งานใหม่'}</h2>
             <form onSubmit={handleCreateUser}>
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>Username</label>
+                  <input
+                    type="text"
+                    value={newUser.username}
+                    onChange={e => setNewUser({ ...newUser, username: e.target.value })}
+                    required
+                    disabled={!!selectedUser}
+                    placeholder={selectedUser ? "Username cannot be changed" : "Enter username"}
+                  />
+                </div>
+
+                {!selectedUser && (
+                  <div className="form-group">
+                    <label>Password</label>
+                    <input
+                      type="password"
+                      value={newUser.password}
+                      onChange={e => setNewUser({ ...newUser, password: e.target.value })}
+                      required
+                      placeholder="Enter password"
+                    />
+                  </div>
+                )}
+              </div>
+
               <div className="form-group">
-                <label>Username</label>
+                <label>ชื่อ-นามสกุล</label>
                 <input
                   type="text"
-                  value={newUser.username}
-                  onChange={e => setNewUser({ ...newUser, username: e.target.value })}
+                  value={newUser.first_name}
+                  onChange={e => setNewUser({ ...newUser, first_name: e.target.value })}
                   required
+                  placeholder="เช่น สมชาย ใจดี"
                 />
               </div>
-              {/* ... other fields ... */}
+
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>อีเมล</label>
+                  <input
+                    type="email"
+                    value={newUser.email}
+                    onChange={e => setNewUser({ ...newUser, email: e.target.value })}
+                    required
+                    placeholder="user@example.com"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>เบอร์โทรศัพท์</label>
+                  <input
+                    type="tel"
+                    value={newUser.tel}
+                    onChange={e => setNewUser({ ...newUser, tel: e.target.value })}
+                    placeholder="0812345678"
+                  />
+                </div>
+              </div>
+
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>รหัสนักศึกษา/พนักงาน</label>
+                  <input
+                    type="text"
+                    value={newUser.student_id_staff_id}
+                    onChange={e => setNewUser({ ...newUser, student_id_staff_id: e.target.value })}
+                    placeholder="63xxxxx"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>สังกัด/หน่วยงาน</label>
+                  <input
+                    type="text"
+                    value={newUser.department}
+                    onChange={e => setNewUser({ ...newUser, department: e.target.value })}
+                    placeholder="เช่น IT Support"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>สิทธิ์การใช้งาน (Role)</label>
+                <select
+                  value={newUser.role}
+                  onChange={e => setNewUser({ ...newUser, role: e.target.value })}
+                >
+                  <option value="user">User (ผู้แจ้งซ่อม)</option>
+                  <option value="technician">Technician (ช่างซ่อม)</option>
+                  <option value="supervisor">Supervisor (หัวหน้าช่าง)</option>
+                  <option value="admin">Admin (ผู้ดูแลระบบ)</option>
+                </select>
+              </div>
               <div className="modal-actions">
-                <button type="button" onClick={() => setShowAddUserModal(false)}>ยกเลิก</button>
-                <button type="submit">บันทึก</button>
+                <button type="button" className="btn-secondary" onClick={() => setShowAddUserModal(false)}>
+                  <X size={18} /> ยกเลิก
+                </button>
+                <button type="submit" className="btn-primary">
+                  <Save size={18} /> บันทึก
+                </button>
               </div>
             </form>
           </div>

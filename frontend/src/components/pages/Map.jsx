@@ -27,29 +27,40 @@ const createCustomIcon = (status) => {
   const color = colors[status] || '#808080';
 
   return L.divIcon({
-    className: 'custom-marker',
+    className: 'custom-marker-wrapper',
     html: `
       <div style="
-        background-color: ${color};
-        width: 30px;
-        height: 30px;
-        border-radius: 50% 50% 50% 0;
-        border: 3px solid white;
-        transform: rotate(-45deg);
-        box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+        width: 36px;
+        height: 50px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
       ">
         <div style="
-          transform: rotate(45deg);
-          margin-top: 5px;
-          margin-left: 8px;
-          color: white;
-          font-size: 16px;
-        ">📍</div>
+          background-color: ${color};
+          width: 28px;
+          height: 28px;
+          border-radius: 50% 50% 50% 0;
+          border: 3px solid white;
+          transform: rotate(-45deg);
+          box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+          position: relative;
+        ">
+          <div style="
+            transform: rotate(45deg);
+            position: absolute;
+            top: 4px;
+            left: 6px;
+            color: white;
+            font-size: 14px;
+            line-height: 1;
+          ">📍</div>
+        </div>
       </div>
     `,
-    iconSize: [30, 42],
-    iconAnchor: [15, 42],
-    popupAnchor: [0, -42]
+    iconSize: [36, 50],
+    iconAnchor: [18, 50],
+    popupAnchor: [0, -45]
   });
 };
 
@@ -322,14 +333,7 @@ const Map = () => {
               />
             )}
 
-            {/* หมุดตำแหน่งผู้ใช้ */}
-            <Marker position={userLocation}>
-              <Popup>
-                <div className="popup-content">
-                  <strong>📍 คุณอยู่ที่นี่</strong>
-                </div>
-              </Popup>
-            </Marker>
+
 
             {/* หมุดจุดแจ้งซ่อม */}
             {filteredRepairs.map((repair) => (

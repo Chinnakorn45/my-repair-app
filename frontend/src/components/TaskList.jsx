@@ -1,5 +1,6 @@
 
 import { Droplets, Zap, Thermometer, Hammer, Wrench, Clock, User, UserCheck } from 'lucide-react';
+import { formatTimeAgo } from '../utils/dateUtils';
 
 function TaskList({ tasks, onSelectTask, onSaveResult }) {
   const getPriorityBadge = (priority) => {
@@ -20,19 +21,6 @@ function TaskList({ tasks, onSelectTask, onSaveResult }) {
       'other': <Hammer size={24} color="#64748b" />
     };
     return icons[type] || <Wrench size={24} color="#64748b" />;
-  };
-
-  const formatTime = (date) => {
-    if (!date) return 'เมื่อไม่นาน';
-    const diff = Date.now() - new Date(date).getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
-
-    if (minutes < 1) return 'เมื่อไม่นาน';
-    if (minutes < 60) return `${minutes} นาทีที่แล้ว`;
-    if (hours < 24) return `${hours} ชั่วโมงที่แล้ว`;
-    return `${days} วันที่แล้ว`;
   };
 
   if (tasks.length === 0) {
@@ -69,7 +57,7 @@ function TaskList({ tasks, onSelectTask, onSaveResult }) {
             <div style={styles.cardFooter}>
               <div style={styles.footerItem}>
                 <Clock size={16} color="#64748b" />
-                <span style={styles.footerText}>{formatTime(task.created_at)}</span>
+                <span style={styles.footerText}>{formatTimeAgo(task.created_at)}</span>
               </div>
               {task.technician_name ? (
                 <div style={styles.footerItem}>
@@ -103,18 +91,24 @@ function TaskList({ tasks, onSelectTask, onSaveResult }) {
               )}
 
               {task.status === 'in_progress' && (
-                <button
-                  style={{
-                    ...styles.actionBtn,
-                    backgroundColor: '#10b981' // Green for save
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (onSaveResult) onSaveResult(task);
-                  }}
-                >
-                  💾 บันทึกผลการซ่อม
-                </button>
+                task.technician_name && !task.is_external ? (
+                  <div style={{ textAlign: 'center', padding: '10px', color: '#0284c7', fontWeight: 'bold', fontSize: '14px' }}>
+                    🔧 มอบหมายให้ {task.technician_name} แล้ว
+                  </div>
+                ) : (
+                  <button
+                    style={{
+                      ...styles.actionBtn,
+                      backgroundColor: '#10b981'
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onSaveResult) onSaveResult(task);
+                    }}
+                  >
+                    💾 บันทึกผลการซ่อม
+                  </button>
+                )
               )}
             </div>
           </div>

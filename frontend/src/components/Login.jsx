@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { User, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
 import './Login.css';
@@ -10,6 +10,23 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [logoUrl, setLogoUrl] = useState(null);
+
+  useEffect(() => {
+    fetchLogo();
+  }, []);
+
+  const fetchLogo = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/settings/logo');
+      const data = await res.json();
+      if (data.hasLogo) {
+        setLogoUrl(`http://localhost:5000${data.logoUrl}?t=${Date.now()}`);
+      }
+    } catch (err) {
+      console.error("Error fetching logo", err);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,7 +73,11 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
         <div className="login-card">
 
           <div className="logo-section">
-            <div className="logo-box">SRU</div>
+            {logoUrl ? (
+              <img src={logoUrl} alt="Logo" className="login-logo-img" />
+            ) : (
+              <div className="logo-box">SRU</div>
+            )}
           </div>
 
           <h1 className="login-title">ยินดีต้อนรับสู่ระบบแจ้งซ่อม มรส.</h1>

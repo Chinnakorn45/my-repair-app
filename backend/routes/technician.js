@@ -98,10 +98,11 @@ router.get("/tasks", auth, async (req, res) => {
       `
       SELECT 
         rr.request_id AS id,
+        rr.request_id,
         rr.description,
         rr.status,
-        rr.lat,
-        rr.lng,
+        COALESCE(rr.lat, b.lat) AS lat,
+        COALESCE(rr.lng, b.lng) AS lng,
         rr.image_before_path AS image,
         rr.created_at,
         b.name AS building_name,

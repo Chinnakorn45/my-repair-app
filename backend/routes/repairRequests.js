@@ -129,18 +129,32 @@ module.exports = (upload, io) => {
 
 
 
-  // API: ลบรายการแจ้งซ่อม (เฉพาะสถานะ pending)
+  // API: ลบรายการแจ้งซ่อม
   router.delete('/:requestId', async (req, res) => {
     const { requestId } = req.params;
     try {
-      // ตรวจสอบสถานะก่อนลบ
       const check = await pool.query('SELECT status FROM REPAIR_REQUEST WHERE request_id = $1', [requestId]);
       if (check.rows.length === 0) return res.status(404).json({ message: 'ไม่พบรายการ' });
 
-      if (check.rows[0].status !== 'pending') {
+      // ดึง role จาก token (ถ้ามี)
+      let userRole = null;
+      const authHeader = req.headers.authorization;
+      if (authHeader) {
+        try {
+          const jwt = require('jsonwebtoken');
+          const token = authHeader.split(' ')[1];
+          const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_secret_key_change_this');
+          userRole = decoded.role;
+        } catch (e) { /* ignore */ }
+      }
+
+      // ผู้ใช้ทั่วไปลบได้เฉพาะ pending, admin/supervisor ลบได้ทุกสถานะ
+      if (userRole !== 'admin' && userRole !== 'supervisor' && check.rows[0].status !== 'pending') {
         return res.status(400).json({ message: 'สามารถลบได้เฉพาะรายการที่รอดำเนินการเท่านั้น' });
       }
 
+      // ลบ repair records ที่เกี่ยวข้องก่อน
+      await pool.query('DELETE FROM repair WHERE request_id = $1', [requestId]);
       await pool.query('DELETE FROM REPAIR_REQUEST WHERE request_id = $1', [requestId]);
       res.json({ success: true, message: 'ลบรายการสำเร็จ' });
     } catch (err) {

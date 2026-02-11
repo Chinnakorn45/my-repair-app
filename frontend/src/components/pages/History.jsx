@@ -5,6 +5,7 @@ import {
   MapPin, Calendar, FileText, ChevronRight,
   Camera, X
 } from 'lucide-react';
+import { formatThaiDateTime } from '../../utils/dateUtils';
 
 const History = ({ userId }) => {
   const [requests, setRequests] = useState([]);
@@ -94,12 +95,7 @@ const History = ({ userId }) => {
     }
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('th-TH', {
-      year: 'numeric', month: 'short', day: 'numeric',
-      hour: '2-digit', minute: '2-digit'
-    });
-  };
+
 
   return (
     <div className="history-container">
@@ -162,7 +158,7 @@ const History = ({ userId }) => {
                     </div>
                     <div className="meta-item">
                       <Calendar size={16} />
-                      {formatDate(req.created_at)}
+                      {formatThaiDateTime(req.created_at)}
                     </div>
                   </div>
                 </div>
@@ -212,7 +208,7 @@ const History = ({ userId }) => {
 
                 <div className="detail-item">
                   <label>วันที่แจ้ง</label>
-                  <p>{formatDate(selectedRequest.created_at)}</p>
+                  <p>{formatThaiDateTime(selectedRequest.created_at)}</p>
                 </div>
 
                 {selectedRequest.repair_detail && (

@@ -15,6 +15,7 @@ const createRepairRoutes = require('./routes/repairRequests');
 const notificationRoutes = require('./routes/Notifications');
 const locationRoutes = require('./routes/locations');
 const technicianRoutes = require('./routes/technician');
+const settingsRoutes = require('./routes/settings');
 
 const app = express();
 const server = http.createServer(app);
@@ -24,6 +25,7 @@ const io = new Server(server, { cors: { origin: "*" } });
 app.use(cors());
 app.use(express.json());
 app.use('/api/Notifications', notificationRoutes);
+app.use('/api/settings', settingsRoutes);
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -329,11 +331,13 @@ app.get('/api/admin/tasks', verifyToken, async (req, res) => {
   try {
     if (req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.status(403).json({ message: 'ไม่มีสิทธิ์เข้าถึง' });
     const { status } = req.query;
-    let query = `SELECT r.*, u.first_name AS reporter, b.name AS location_name, tech.first_name AS technician_name
+    let query = `SELECT r.*, u.first_name AS reporter, b.name AS location_name, tech.first_name AS technician_name,
+       rep.image_after, rep.repair_detail
        FROM repair_request r
        LEFT JOIN "USER" u ON u.user_id = r.user_id
        LEFT JOIN buildings b ON b.id = r.building_id
-       LEFT JOIN "USER" tech ON tech.user_id = r.assigned_to`;
+       LEFT JOIN "USER" tech ON tech.user_id = r.assigned_to
+       LEFT JOIN repair rep ON rep.request_id = r.request_id`;
 
     const params = [];
     if (status && status !== 'all') {
