@@ -156,7 +156,7 @@ my-repair-app/
 │
 ├── frontend/                   # React Vite App
 │   ├── src/
-│   │   ├── components/        # React components
+│   │   ├── components/        # React components3
 │   │   │   ├── Login.jsx
 │   │   │   ├── Login.css
 │   │   │   ├── Register.jsx
