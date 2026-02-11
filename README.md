@@ -1,4 +1,4 @@
-# ระบบแจ้งซ่อม มหาวิทยาลัยศรีราชยศรรธนี (SRU Maintenance System)
+# ระบบแจ้งซ่อม
 
 [English](#english-version) | [ไทย](#thai-version)
 

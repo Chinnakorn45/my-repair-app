@@ -18,7 +18,6 @@ export default function MapPicker({ position, setPosition, onLocationUpdate, exi
   const mapRef = useRef(null);
 
   useEffect(() => {
-    // Auto-detect user's current location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
