@@ -244,7 +244,7 @@ app.put('/api/admin/users/:user_id', verifyToken, async (req, res) => {
       return res.status(403).json({ message: 'ไม่มีสิทธิ์เข้าถึง' });
     }
     const { user_id } = req.params;
-    const { username, email, first_name, student_id_staff_id, role, department, phone } = req.body;
+    const { username, password, email, first_name, student_id_staff_id, role, department, phone } = req.body;
 
     if (username) {
       const existingUser = await pool.query('SELECT * FROM "USER" WHERE username = $1 AND user_id != $2', [username, user_id]);
@@ -256,6 +256,11 @@ app.put('/api/admin/users/:user_id', verifyToken, async (req, res) => {
     let paramIndex = 1;
 
     if (username) { updates.push(`username = $${paramIndex++}`); values.push(username); }
+    if (password) {
+      const bcrypt = require('bcrypt');
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updates.push(`password = $${paramIndex++}`); values.push(hashedPassword);
+    }
     if (email !== undefined) { updates.push(`email = $${paramIndex++}`); values.push(email || null); }
     if (first_name) { updates.push(`first_name = $${paramIndex++}`); values.push(first_name); }
     if (student_id_staff_id !== undefined) { updates.push(`student_id_staff_id = $${paramIndex++}`); values.push(student_id_staff_id || null); }

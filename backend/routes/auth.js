@@ -11,10 +11,19 @@ router.post('/register', async (req, res) => {
   const { username, password, email, first_name, student_id_staff_id, role, department, phone } = req.body;
 
   try {
-    // ตรวจสอบ username ซ้ำ
-    const existingUser = await pool.query('SELECT * FROM "USER" WHERE username = $1', [username]);
+    // ตรวจสอบข้อมูลซ้ำ
+    const existingUser = await pool.query('SELECT * FROM "USER" WHERE username = $1 OR email = $2 OR student_id_staff_id = $3', [username, email, student_id_staff_id]);
+
     if (existingUser.rows.length > 0) {
-      return res.status(400).json({ message: 'ชื่อผู้ใช้นี้มีอยู่แล้ว' });
+      if (existingUser.rows.find(u => u.username === username)) {
+        return res.status(400).json({ message: 'ชื่อผู้ใช้นี้มีอยู่แล้ว' });
+      }
+      if (existingUser.rows.find(u => u.email === email)) {
+        return res.status(400).json({ message: 'อีเมลนี้ถูกใช้งานแล้ว' });
+      }
+      if (existingUser.rows.find(u => u.student_id_staff_id === student_id_staff_id)) {
+        return res.status(400).json({ message: 'รหัสนักศึกษา/บุคลากรนี้ลงทะเบียนแล้ว' });
+      }
     }
 
     // Hash password
@@ -49,7 +58,7 @@ router.post('/login', async (req, res) => {
   try {
     // ค้นหาผู้ใช้
     const result = await pool.query('SELECT * FROM "USER" WHERE username = $1', [username]);
-    
+
     if (result.rows.length === 0) {
       return res.status(401).json({ message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' });
     }
@@ -58,7 +67,7 @@ router.post('/login', async (req, res) => {
 
     // ตรวจสอบรหัสผ่าน
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    
+
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' });
     }

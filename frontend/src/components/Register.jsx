@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 import {
   ArrowLeft, User, IdCard, Building, Phone, Mail, Lock, Key, UserPlus
 } from 'lucide-react';
@@ -11,10 +12,10 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
     department: '',
     phone: '',
     email: '',
+    username: '',
     password: '',
     confirmPassword: ''
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const departmentOptions = [
@@ -37,25 +38,27 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
 
     // Validation
-    if (!formData.first_name.trim()) return setError('กรุณากรอกชื่อและนามสกุล');
-    if (!formData.student_id_staff_id.trim()) return setError('กรุณากรอกรหัสนักศึกษา/บุคลากร');
-    if (!formData.department) return setError('กรุณาเลือกคณะ/หน่วยงาน');
-    if (!formData.phone.trim()) return setError('กรุณากรอกเบอร์โทรศัพท์');
-    if (!formData.email.includes('@sru.ac.th')) return setError('กรุณากรอกอีเมลมหาวิทยาลัย (@sru.ac.th)');
-    if (formData.password.length < 8) return setError('รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร');
-    if (formData.password !== formData.confirmPassword) return setError('รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน');
+    if (!formData.first_name.trim()) return Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกชื่อและนามสกุล', 'warning');
+    if (!formData.student_id_staff_id.trim()) return Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกรหัสนักศึกษา/บุคลากร', 'warning');
+    if (!formData.department) return Swal.fire('ข้อมูลไม่ครบ', 'กรุณาเลือกคณะ/หน่วยงาน', 'warning');
+    if (!formData.phone.trim()) return Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกเบอร์โทรศัพท์', 'warning');
+    if (!formData.username.trim()) return Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกชื่อผู้ใช้งาน (Username)', 'warning');
+
+    // Relaxed password check
+    if (formData.password.length < 4) return Swal.fire('รหัสผ่านสั้นเกินไป', 'รหัสผ่านต้องมีความยาวอย่างน้อย 4 ตัวอักษร', 'warning');
+    if (formData.password !== formData.confirmPassword) return Swal.fire('รหัสผ่านไม่ตรงกัน', 'รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน', 'warning');
 
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/register', {
+      // Fixed API endpoint
+      const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          username: formData.email.split('@')[0],
+          username: formData.username,
           password: formData.password,
           email: formData.email,
           first_name: formData.first_name,
@@ -71,13 +74,22 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user_id', data.user_id);
         localStorage.setItem('user_role', data.role);
-        onRegisterSuccess(data.user_id, data.role);
+
+        Swal.fire({
+          title: 'สมัครสมาชิกสำเร็จ!',
+          text: 'ยินดีต้อนรับเข้าสู่ระบบ',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        }).then(() => {
+          onRegisterSuccess(data.user_id, data.role);
+        });
       } else {
         const errorData = await response.json();
-        setError(errorData.message || 'เกิดข้อผิดพลาดในการสมัครสมาชิก');
+        Swal.fire('เกิดข้อผิดพลาด', errorData.message || 'ไม่สามารถสมัครสมาชิกได้', 'error');
       }
     } catch (err) {
-      setError('เกิดข้อผิดพลาด: ' + err.message);
+      Swal.fire('Error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + err.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -112,8 +124,6 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
             <h3 className="register-headline-title">ลงทะเบียนผู้ใช้งานใหม่</h3>
             <p className="register-headline-subtitle">กรุณากรอกข้อมูลส่วนตัวเพื่อเข้าใช้งานระบบ</p>
           </div>
-
-          {error && <div className="register-error">{error}</div>}
 
           <form onSubmit={handleSubmit} className="register-form">
             <div className="register-form-group">
@@ -180,7 +190,7 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
             </div>
 
             <div className="register-form-group">
-              <label className="register-label">อีเมลมหาวิทยาลัย (@sru.ac.th)</label>
+              <label className="register-label">อีเมล</label>
               <div className="register-input-wrapper">
                 <span className="register-input-icon"><Mail size={20} /></span>
                 <input
@@ -188,7 +198,22 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="example@sru.ac.th"
+                  placeholder="user@example.com"
+                  className="register-input"
+                />
+              </div>
+            </div>
+
+            <div className="register-form-group">
+              <label className="register-label">ชื่อผู้ใช้งาน (Username)</label>
+              <div className="register-input-wrapper">
+                <span className="register-input-icon"><User size={20} /></span>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="ตั้งชื่อผู้ใช้งาน (ภาษาอังกฤษ)"
                   className="register-input"
                 />
               </div>
@@ -203,7 +228,7 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="กำหนดรหัสผ่าน 8 ตัวขึ้นไป"
+                  placeholder="กรอกรหัสผ่านที่จำได้ง่าย (4 ตัวขึ้นไป)"
                   className="register-input"
                 />
               </div>

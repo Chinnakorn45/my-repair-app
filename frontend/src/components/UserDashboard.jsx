@@ -150,7 +150,6 @@ const UserDashboard = ({ userId, onLogout }) => {
           <div className="header-content">
             <h1 className="page-title">{getPageTitle()}</h1>
           </div>
-          <div className="user-greeting">สวัสดี, {userName}</div>
         </div>
 
 

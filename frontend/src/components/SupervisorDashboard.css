@@ -75,7 +75,7 @@
   z-index: 100;
   background: white;
   border-bottom: 1px solid var(--border-color);
-  padding: 20px 30px 20px 10px;
+  padding: 20px 10px 20px 30px;
   /* Updated to match Technician */
   display: flex;
   align-items: center;
@@ -88,7 +88,7 @@
 }
 
 .container {
-  padding: 100px 24px 20px 10px;
+  padding: 100px 10px 20px 30px;
   flex: 1;
 }
 
@@ -118,7 +118,7 @@
 }
 
 .container {
-  padding: 100px 24px 20px 10px;
+  padding: 100px 10px 20px 30px;
   /* Added top padding for fixed header */
   flex: 1;
 }
@@ -199,8 +199,7 @@
 /* ========== CONTAINER ========== */
 .container {
   flex: 1;
-  padding: 20px 24px 24px 10px;
-  max-width: 1400px;
+  padding: 20px 10px 24px 30px;
   width: 100%;
   margin: 0;
 }

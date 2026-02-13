@@ -1,20 +1,33 @@
 /* ========================================
-   Technician Dashboard - Enhanced Styles
+   Technician Dashboard - Same Style as Supervisor Dashboard
    ======================================== */
 
-/* ============ Base & Layout ============ */
+:root {
+  --primary-color: #3b82f6;
+  --primary-dark: #2563eb;
+  --primary-darker: #1e40af;
+  --text-black: #1f2937;
+  --text-gray: #64748b;
+  --border-color: #e5e7eb;
+  --bg-gray: #f8f9fa;
+  --sidebar-width: 260px;
+}
+
+/* ========== BASE LAYOUT WITH FIXED SIDEBAR ========== */
 .technician-dashboard {
   display: flex;
   min-height: 100vh;
-  background: #f5f7fa;
+  background-color: var(--bg-gray);
+  overflow-x: hidden;
+  width: 100%;
 }
 
-/* ✅ Fixed Sidebar - ล็อคไม่ให้ขยับ */
+/* ✅ Fixed Sidebar */
 .sidebar {
   position: fixed;
   left: 0;
   top: 0;
-  width: 260px;
+  width: var(--sidebar-width);
   height: 100vh;
   background: #1a1f36;
   z-index: 1000;
@@ -40,180 +53,329 @@
   background: rgba(255, 255, 255, 0.5);
 }
 
+/* Main Content Area */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: 260px;
+  margin-left: var(--sidebar-width);
   transition: margin-left 0.3s ease;
   min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
 }
 
+/* ========== TOP BAR ========== */
 .top-bar {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 20px 30px 20px 10px;
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
   z-index: 100;
+  background: white;
+  border-bottom: 1px solid var(--border-color);
+  padding: 20px 10px 20px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  transition: left 0.3s ease;
+}
+
+.container {
+  padding: 20px 10px 20px 30px;
+  flex: 1;
+  width: 100%;
+  margin: 0;
 }
 
 .menu-toggle {
   display: none;
-  padding: 10px;
-  background: none;
+  background: transparent;
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #333;
+  padding: 8px;
+  color: var(--text-black);
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+  background: #f3f4f6;
 }
 
 .page-title {
   font-size: 24px;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: var(--text-black);
   margin: 0;
-  /* ปรับให้ไม่ตัดคำ */
+  flex: 1;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
-.container {
-  flex: 1;
-  padding: 20px 30px 30px 10px;
-  max-width: 100%;
-  margin: 0;
-  width: 100%;
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-/* ============ Stats Grid ============ */
-.stats-grid {
+.notification-btn {
+  position: relative;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  transition: all 0.3s;
+  color: var(--text-gray);
+}
+
+.notification-btn:hover {
+  background: #f3f4f6;
+  color: var(--text-black);
+}
+
+.notification-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 2px solid white;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* ========== STATS GRID ========== */
+.technician-dashboard .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
-  margin: 0 0 30px 0;
+  margin-bottom: 24px;
 }
 
-.stat-card {
+.technician-dashboard .stat-card {
   background: white;
   border-radius: 12px;
+  border: 1px solid var(--border-color);
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  /* แสดงข้อมูลเต็ม */
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  text-align: center;
 }
 
-.stat-card:hover {
+.technician-dashboard .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border-color: var(--primary-color);
 }
 
-.stat-content {
+.technician-dashboard .stat-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex: 1;
 }
 
-.stat-info {
+.technician-dashboard .stat-info {
   flex: 1;
-  min-width: 0; /* ช่วยในการจัดการ text overflow */
+  min-width: 0;
 }
 
-.stat-label {
+.technician-dashboard .stat-label {
   font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 8px;
-  font-weight: 500;
-  /* แสดงข้อความเต็ม */
+  color: var(--text-gray);
+  font-weight: 600;
+  text-transform: none;
+  margin: 0 0 8px 0;
+  letter-spacing: 0;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
-.stat-number {
+.technician-dashboard .stat-number {
   font-size: 36px;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text-black);
+  margin: 0;
   line-height: 1.2;
-  /* รองรับตัวเลขยาว */
   word-break: break-all;
 }
 
-.stat-icon {
-  font-size: 48px;
-  opacity: 0.8;
+/* Stat Icon Wrapper */
+.stat-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  margin-left: 12px;
 }
 
-/* ============ Filter Tabs ============ */
-.filter-tabs {
+.stat-icon-wrapper.bg-warn-light {
+  background: #fef3c7;
+}
+
+.stat-icon-wrapper.bg-info-light {
+  background: #dbeafe;
+}
+
+.stat-icon-wrapper.bg-success-light {
+  background: #dcfce7;
+}
+
+.text-warn {
+  color: #f59e0b;
+}
+
+.text-info {
+  color: #3b82f6;
+}
+
+.text-success {
+  color: #22c55e;
+}
+
+.stat-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
   display: flex;
-  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+  margin-left: 12px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+}
+
+/* ========== SECTION TITLE ========== */
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-black);
+  margin: 0 0 20px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ========== FILTER TABS ========== */
+.technician-dashboard .filter-tabs {
+  display: flex;
+  gap: 8px;
   margin-bottom: 24px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
   flex-wrap: wrap;
 }
 
-.filter-tab {
+.technician-dashboard .filter-tabs::-webkit-scrollbar {
+  height: 6px;
+}
+
+.technician-dashboard .filter-tabs::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.technician-dashboard .filter-tabs::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.technician-dashboard .filter-tabs::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.technician-dashboard .filter-tab {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 20px;
+  padding: 10px 18px;
   background: white;
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  color: #6b7280;
-  /* ป้องกันการตัดข้อความ */
-  white-space: nowrap;
-}
-
-.filter-tab:hover {
-  border-color: #667eea;
-  background: #f8f9ff;
-}
-
-.filter-tab.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: #667eea;
-  color: white;
-}
-
-.tab-icon {
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.tab-text {
-  font-size: 15px;
-  /* แสดงข้อความเต็ม */
-  overflow: visible;
-}
-
-.tab-badge {
-  background: rgba(0, 0, 0, 0.1);
-  padding: 2px 10px;
+  border: 2px solid #e2e8f0;
   border-radius: 12px;
-  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  font-size: 14px;
   font-weight: 600;
+  color: #64748b;
+  min-width: fit-content;
+}
+
+.technician-dashboard .filter-tab:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+.technician-dashboard .filter-tab.active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+}
+
+.technician-dashboard .tab-icon {
+  display: flex;
+  align-items: center;
+  font-size: inherit;
+}
+
+.technician-dashboard .tab-text {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.technician-dashboard .tab-badge {
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
   min-width: 24px;
   text-align: center;
 }
 
-.filter-tab.active .tab-badge {
-  background: rgba(255, 255, 255, 0.3);
+.technician-dashboard .filter-tab:not(.active) .tab-badge {
+  background: #f1f5f9;
+  color: #64748b;
 }
 
-/* ============ Tasks Container ============ */
+.technician-dashboard .filter-tab.active .tab-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+/* ========== TASK LIST CONTAINER ========== */
+.task-list-container {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  min-height: 400px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* ========== TASKS CONTAINER ========== */
 .tasks-container {
   background: white;
   border-radius: 12px;
@@ -247,7 +409,7 @@
   min-height: 200px;
 }
 
-/* ============ Tasks Grid ============ */
+/* ========== TASKS GRID ========== */
 .tasks-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -262,7 +424,6 @@
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  /* รองรับความสูงที่ยืดหยุ่น */
   min-height: 400px;
 }
 
@@ -297,7 +458,6 @@
   font-size: 12px;
   font-weight: 600;
   backdrop-filter: blur(10px);
-  /* แสดงข้อความเต็ม */
   max-width: calc(100% - 40px);
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -324,7 +484,6 @@
   color: #1f2937;
   margin: 0 0 8px 0;
   line-height: 1.5;
-  /* แสดงข้อความเต็มและขึ้นบรรทัดใหม่ */
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
@@ -332,7 +491,7 @@
   min-width: 0;
 }
 
-/* ============ Status Badges ============ */
+/* ========== STATUS BADGES ========== */
 .status-badge {
   display: inline-block;
   padding: 6px 14px;
@@ -350,7 +509,8 @@
   color: #92400e;
 }
 
-.status-badge.in-progress {
+.status-badge.in-progress,
+.status-badge.in_progress {
   background: #dbeafe;
   color: #1e40af;
 }
@@ -360,12 +520,13 @@
   color: #065f46;
 }
 
-.status-badge.pending-approval {
+.status-badge.pending-approval,
+.status-badge.pending_approval {
   background: #fce7f3;
   color: #9f1239;
 }
 
-/* ============ Task Info ============ */
+/* ========== TASK INFO ========== */
 .task-info {
   padding: 12px 16px;
   display: flex;
@@ -373,7 +534,6 @@
   gap: 10px;
   background: #f9fafb;
   flex: 1;
-  /* แสดงข้อมูลเต็ม */
   overflow: visible;
 }
 
@@ -395,7 +555,6 @@
 .task-info-item .text {
   flex: 1;
   line-height: 1.6;
-  /* แสดงข้อความเต็ม */
   word-wrap: break-word;
   overflow-wrap: break-word;
   min-width: 0;
@@ -406,7 +565,21 @@
   font-size: 13px;
 }
 
-/* ============ Task Actions ============ */
+.task-info-text {
+  margin: 6px 0;
+  font-size: 14px;
+  color: var(--text-black);
+  line-height: 1.6;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.task-info-text strong {
+  font-weight: 600;
+  color: var(--text-black);
+}
+
+/* ========== TASK ACTIONS ========== */
 .task-actions {
   padding: 16px;
   display: flex;
@@ -428,13 +601,13 @@
 }
 
 .task-btn.primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
 }
 
 .task-btn.primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 .task-btn.success {
@@ -453,32 +626,16 @@
   cursor: not-allowed;
 }
 
-/* ============ Empty State ============ */
-.empty-state {
+/* ========== LOADING STATE ========== */
+.loading-message {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px;
-  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-gray);
 }
 
-.empty-icon {
-  font-size: 80px;
-  margin-bottom: 16px;
-  opacity: 0.5;
-}
-
-.empty-text {
-  font-size: 18px;
-  color: #6b7280;
-  font-weight: 500;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  max-width: 500px;
-}
-
-/* ============ Loading State ============ */
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -491,24 +648,27 @@
 .spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #667eea;
+  border: 4px solid #e5e7eb;
+  border-top-color: var(--primary-color);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 20px;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
+.loading-message p,
 .loading-state p {
-  font-size: 16px;
-  color: #6b7280;
   margin: 0;
+  font-size: 16px;
+  font-weight: 500;
 }
 
-/* ============ Modal ============ */
+/* ========== MODAL ========== */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -541,6 +701,7 @@
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -621,8 +782,8 @@
 }
 
 .upload-placeholder:hover {
-  border-color: #667eea;
-  background: #f8f9ff;
+  border-color: var(--primary-color);
+  background: #eff6ff;
 }
 
 .upload-icon {
@@ -658,7 +819,7 @@
   margin-top: 24px;
 }
 
-/* ============ Buttons ============ */
+/* ========== BUTTONS ========== */
 .btn {
   padding: 12px 24px;
   border: none;
@@ -672,13 +833,13 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 .btn-primary:disabled {
@@ -706,60 +867,100 @@
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 
-/* ============ Placeholder Pages ============ */
+.confirm-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.confirm-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ========== EMPTY STATE ========== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 18px;
+  color: #6b7280;
+  font-weight: 500;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 500px;
+}
+
+/* ========== PLACEHOLDER CONTENT ========== */
 .placeholder-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 400px;
-  padding: 40px 20px;
+  padding: 80px 20px;
   text-align: center;
-}
-
-/* Map container specific styles */
-.map-container {
-  margin: 0 -20px 0 -10px;
-  width: calc(100% + 30px);
-}
-
-.map-section {
-  margin: 0;
-  padding: 0;
-}
-
-.map-wrapper {
-  margin: 0;
-  padding: 0;
-}
-
-#map {
-  margin: 0;
-  padding: 0;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
 }
 
 .placeholder-icon {
   font-size: 80px;
   margin-bottom: 20px;
+  opacity: 0.5;
   animation: bounce 2s infinite;
 }
 
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .placeholder-content h2 {
   font-size: 28px;
-  color: #1f2937;
-  margin: 0 0 10px 0;
+  font-weight: 700;
+  color: var(--text-black);
+  margin: 0 0 12px 0;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
 .placeholder-content p {
   font-size: 16px;
-  color: #6b7280;
+  color: var(--text-gray);
   margin: 0 0 30px 0;
   line-height: 1.6;
   word-wrap: break-word;
@@ -782,7 +983,7 @@
   padding: 15px 20px;
   background: #f8f9fa;
   border-radius: 10px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid var(--primary-color);
   transition: all 0.3s ease;
   text-align: left;
 }
@@ -806,7 +1007,30 @@
   overflow-wrap: break-word;
 }
 
-/* ============ Error Screen ============ */
+/* ========== MAP CONTAINER ========== */
+.map-container {
+  margin: 0 -20px 0 -10px;
+  width: calc(100% + 30px);
+}
+
+.map-section {
+  margin: 0;
+  padding: 0;
+}
+
+.map-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+#map {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ========== ERROR SCREEN ========== */
 .error-screen {
   display: flex;
   align-items: center;
@@ -841,14 +1065,14 @@
   overflow-wrap: break-word;
 }
 
-.error-card > div:last-child {
+.error-card>div:last-child {
   display: flex;
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-/* ============ Loading Screen ============ */
+/* ========== LOADING SCREEN ========== */
 .loading-screen {
   display: flex;
   align-items: center;
@@ -871,7 +1095,7 @@
   font-weight: 500;
 }
 
-/* ============ Scrollbar Styling ============ */
+/* ========== SCROLLBAR ========== */
 .modal::-webkit-scrollbar {
   width: 8px;
 }
@@ -890,15 +1114,32 @@
   background: #555;
 }
 
-/* ============ Responsive Design ============ */
+/* ========== SIDEBAR OVERLAY FOR MOBILE ========== */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
 @media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+  }
+
   .tasks-grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 }
 
 @media (max-width: 768px) {
-  /* ✅ Mobile - Sidebar ซ่อนและแสดงแบบ Overlay */
   .sidebar {
     transform: translateX(-100%);
     transition: transform 0.3s ease;
@@ -906,6 +1147,10 @@
 
   .sidebar.mobile-open {
     transform: translateX(0);
+  }
+
+  .sidebar-overlay.active {
+    display: block;
   }
 
   .main-content {
@@ -922,6 +1167,10 @@
 
   .top-bar {
     padding: 16px 20px 16px 10px;
+  }
+
+  .page-title {
+    font-size: 20px;
   }
 
   .stats-grid {
@@ -944,8 +1193,8 @@
     flex-shrink: 0;
   }
 
-  .page-title {
-    font-size: 20px;
+  .stat-number {
+    font-size: 28px;
   }
 
   .modal {
@@ -965,49 +1214,40 @@
     width: 100%;
   }
 
-  .stat-number {
-    font-size: 32px;
-  }
-}
-
-/* ========== OVERLAY FOR MOBILE SIDEBAR ========== */
-.sidebar-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  backdrop-filter: blur(2px);
-}
-
-@media (max-width: 768px) {
-  .sidebar-overlay.active {
-    display: block;
+  .section-title {
+    font-size: 18px;
   }
 }
 
 @media (max-width: 480px) {
-  .top-bar {
-    padding: 12px 16px 12px 8px;
-  }
-
   .container {
     padding: 12px 16px 16px 8px;
   }
 
+  .top-bar {
+    padding: 12px 16px 12px 8px;
+  }
+
+  .page-title {
+    font-size: 18px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
   .stat-card {
-    padding: 20px;
+    padding: 16px;
   }
 
   .stat-number {
-    font-size: 28px;
+    font-size: 24px;
   }
 
   .stat-icon {
-    font-size: 36px;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
   }
 
   .placeholder-icon {
@@ -1044,20 +1284,27 @@
   }
 }
 
-/* ============ Print Styles ============ */
+/* ========== PRINT STYLES ========== */
 @media print {
-  .task-card {
-    break-inside: avoid;
-    page-break-inside: avoid;
+
+  .sidebar,
+  .menu-toggle,
+  .notification-btn {
+    display: none;
   }
 
+  .main-content {
+    margin-left: 0;
+  }
+
+  .task-card,
   .stat-card {
     break-inside: avoid;
     page-break-inside: avoid;
   }
 }
 
-/* ============ Utility Classes ============ */
+/* ========== UTILITY CLASSES ========== */
 .text-truncate {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1073,6 +1320,7 @@
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1080,11 +1328,12 @@
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* ============ Accessibility ============ */
+/* ========== ACCESSIBILITY ========== */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -1097,16 +1346,15 @@
   border-width: 0;
 }
 
-/* Focus styles for keyboard navigation */
 button:focus-visible,
 .filter-tab:focus-visible,
 .task-btn:focus-visible {
-  outline: 2px solid #667eea;
+  outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
+
   .stat-card,
   .task-card,
   .filter-tab {
@@ -1114,8 +1362,8 @@ button:focus-visible,
   }
 }
 
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -1123,4 +1371,10 @@ button:focus-visible,
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+.icon-gap {
+  margin-right: 8px;
+  vertical-align: middle;
+  margin-bottom: 2px;
 }
