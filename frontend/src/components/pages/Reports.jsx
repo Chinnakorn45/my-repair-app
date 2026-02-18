@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
     BarChart2, TrendingUp, Download,
-    CheckCircle, Clock, AlertCircle, RefreshCw
+    CheckCircle, Clock, AlertCircle, RefreshCw, Printer
 } from 'lucide-react';
 import { formatThaiDate, formatThaiMonth } from '../../utils/dateUtils';
 import './Reports.css';
@@ -115,98 +115,75 @@ const Reports = () => {
     return (
         <div className="reports-container">
             {/* Hidden Print Wrapper */}
-            <div className="print-only memo-wrapper">
-                <div className="memo-header">
-                    <div className="garuda-container">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Garuda_Emb_of_Thailand_%28vector%29.svg/512px-Garuda_Emb_of_Thailand_%28vector%29.svg.png" alt="Garuda" className="garuda-img" />
-                    </div>
-                    <h1>บันทึกข้อความ</h1>
-                </div>
-                <div className="memo-info">
-                    <p><strong>ส่วนราชการ:</strong> ศูนย์ซ่อมบำรุงและบริการ (IT Support & Maintenance Center)</p>
-                    <div className="memo-row">
-                        <p><strong>ที่:</strong> ............................................................</p>
-                        <p><strong>วันที่:</strong> {formatThaiDate(new Date())}</p>
-                    </div>
-                    <p><strong>เรื่อง:</strong> สรุปรายงานสถานะการแจ้งซ่อมและประสิทธิภาพการปฏิบัติงาน</p>
-                </div>
-                <div className="memo-body">
-                    <p>เรียน หัวหน้าส่วนงาน / ผู้เกี่ยวข้อง</p>
-                    <p style={{ textIndent: '2.5cm', marginBottom: '1cm' }}>
-                        ตามที่มีการดำเนินงานแจ้งซ่อมผ่านระบบออนไลน์ ศูนย์ซ่อมบำรุงได้ดำเนินการสรุปผลการปฏิบัติงาน
-                        ณ วันที่ {formatThaiDate(new Date())} โดยมีรายละเอียดสถิติจำนวนงานและประสิทธิภาพทีมช่างดังนี้:
-                    </p>
+            <div className="print-only">
+                <h2 style={{ textAlign: 'center', marginBottom: '10px' }}>สรุปรายงานการซ่อมบำรุง</h2>
+                <p style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    <strong>วันที่ออกรายงาน:</strong> {formatThaiDate(new Date())}
+                </p>
 
-                    <h4>1. สรุปสถานะงานซ่อมทั้งหมด</h4>
-                    <table className="memo-table">
-                        <thead>
-                            <tr>
-                                <th>สถานะ</th>
-                                <th className="text-right">จำนวนงาน</th>
-                                <th>หมายเหตุ</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>รอดำเนินการ (Pending)</td>
-                                <td className="text-right">{summary?.status.pending || 0}</td>
-                                <td>อยู่ระหว่างรอการจัดสรรช่าง</td>
-                            </tr>
-                            <tr>
-                                <td>กำลังดำเนินการ (In Progress)</td>
-                                <td className="text-right">{summary?.status.in_progress || 0}</td>
-                                <td>ช่างกำลังรับดำเนินการหรือรออะไหล่</td>
-                            </tr>
-                            <tr>
-                                <td>เสร็จสิ้น (Completed)</td>
-                                <td className="text-right">{summary?.status.completed || 0}</td>
-                                <td>ดำเนินการเสร็จสิ้นเรียบร้อยแล้ว</td>
-                            </tr>
-                            <tr className="row-total">
-                                <td><strong>รวมทั้งสิ้น</strong></td>
-                                <td className="text-right"><strong>{summary?.total || 0}</strong></td>
-                                <td><strong>รายการ</strong></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <h4>1. สรุปสถานะงานซ่อมทั้งหมด</h4>
+                <table className="report-table-print">
+                    <thead>
+                        <tr>
+                            <th>สถานะ</th>
+                            <th className="text-right">จำนวนงาน</th>
+                            <th>หมายเหตุ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>รอดำเนินการ (Pending)</td>
+                            <td className="text-right">{summary?.status.pending || 0}</td>
+                            <td>อยู่ระหว่างรอการจัดสรรช่าง</td>
+                        </tr>
+                        <tr>
+                            <td>กำลังดำเนินการ (In Progress)</td>
+                            <td className="text-right">{summary?.status.in_progress || 0}</td>
+                            <td>ช่างกำลังรับดำเนินการหรือรออะไหล่</td>
+                        </tr>
+                        <tr>
+                            <td>เสร็จสิ้น (Completed)</td>
+                            <td className="text-right">{summary?.status.completed || 0}</td>
+                            <td>ดำเนินการเสร็จสิ้นเรียบร้อยแล้ว</td>
+                        </tr>
+                        <tr className="row-total">
+                            <td><strong>รวมทั้งสิ้น</strong></td>
+                            <td className="text-right"><strong>{summary?.total || 0}</strong></td>
+                            <td><strong>รายการ</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                    <h4 style={{ marginTop: '1cm' }}>2. ประสิทธิภาพการดำเนินงานของทีมช่าง</h4>
-                    <table className="memo-table">
-                        <thead>
-                            <tr>
-                                <th>ลำดับ</th>
-                                <th>ชื่อ-นามสกุล</th>
-                                <th className="text-center">รับงาน</th>
-                                <th className="text-center">เสร็จสิ้น</th>
-                                <th className="text-center">คิดเป็นร้อยละ</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {techPerformance.map((tech, idx) => {
-                                const total = parseInt(tech.total_tasks) || 0;
-                                const completed = parseInt(tech.completed_tasks) || 0;
-                                const rate = total > 0 ? ((completed / total) * 100).toFixed(1) : 0;
-                                return (
-                                    <tr key={idx}>
-                                        <td className="text-center">{idx + 1}</td>
-                                        <td>{tech.name}</td>
-                                        <td className="text-center">{total}</td>
-                                        <td className="text-center">{completed}</td>
-                                        <td className="text-center">{rate}%</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-
-                    <div className="memo-signature">
-                        <p>จึงเรียนมาเพื่อโปรดทราบและพิจารณา</p>
-                        <div className="signature-box">
-                            <p>(........................................................)</p>
-                            <p>ตำแหน่ง ....................................................</p>
-                        </div>
-                    </div>
-                </div>
+                <h4 style={{ marginTop: '30px' }}>2. ประสิทธิภาพการดำเนินงานของทีมช่าง</h4>
+                <table className="report-table-print">
+                    <thead>
+                        <tr>
+                            <th>ลำดับ</th>
+                            <th>ชื่อ-นามสกุล</th>
+                            <th className="text-center">งานทั้งหมด</th>
+                            <th className="text-center">กำลังทำ</th>
+                            <th className="text-center">เสร็จสิ้น</th>
+                            <th className="text-center">อัตราสำเร็จ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {techPerformance.map((tech, idx) => {
+                            const total = parseInt(tech.total_tasks) || 0;
+                            const completed = parseInt(tech.completed_tasks) || 0;
+                            const rate = total > 0 ? ((completed / total) * 100).toFixed(1) : 0;
+                            return (
+                                <tr key={idx}>
+                                    <td className="text-center">{idx + 1}</td>
+                                    <td>{tech.name}</td>
+                                    <td className="text-center">{total}</td>
+                                    <td className="text-center">{tech.active_tasks}</td>
+                                    <td className="text-center">{completed}</td>
+                                    <td className="text-center">{rate}%</td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
             </div>
 
             <div className="reports-actions no-print" style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginBottom: 20 }}>
@@ -214,7 +191,7 @@ const Reports = () => {
                     <Download size={16} className="icon-gap" /> ส่งออก CSV
                 </button>
                 <button className="print-btn" onClick={handlePrint} style={{ background: '#475569' }}>
-                    <BarChart2 size={16} className="icon-gap" /> พิมพ์สรุปรายงาน (PDF)
+                    <Printer size={16} className="icon-gap" /> พิมพ์สรุปรายงาน
                 </button>
             </div>
 

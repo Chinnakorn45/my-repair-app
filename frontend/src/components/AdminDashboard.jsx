@@ -16,6 +16,7 @@ import History from './pages/History';
 import Reports from './pages/Reports';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
+import CustomReport from './pages/CustomReport';
 
 const BuildingManager = lazy(() => import('./BuildingManager'));
 
@@ -312,6 +313,7 @@ export default function AdminDashboard({ userId, onLogout }) {
               {activeMenu === 'history' && <><Clock size={28} className="icon-gap" /> ประวัติระบบ</>}
               {activeMenu === 'settings' && <><SettingsIcon size={28} className="icon-gap" /> ตั้งค่า</>}
               {activeMenu === 'notifications' && <><Bell size={28} className="icon-gap" /> จัดการข่าวสาร/ประกาศ</>}
+
               {activeMenu === 'profile' && <><User size={28} className="icon-gap" /> โปรไฟล์</>}
             </h1>
           </div>
@@ -430,6 +432,7 @@ export default function AdminDashboard({ userId, onLogout }) {
 
           {activeMenu === 'notifications' && <AnnouncementManager />}
           {activeMenu === 'reports' && <Reports />}
+
           {activeMenu === 'history' && <History />}
           {activeMenu === 'profile' && (
             <div className="content-wrapper">

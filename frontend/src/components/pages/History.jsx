@@ -184,13 +184,24 @@ const History = ({ userId }) => {
                 {selectedRequest.image_url && (
                   <div className="detail-image">
                     <label><Camera size={16} /> รูปก่อนซ่อม</label>
-                    <img src={`http://localhost:5000${selectedRequest.image_url}`} alt="Problem" />
+                    <img
+                      src={`http://localhost:5000${selectedRequest.image_url.replace(/\\/g, '/').replace('//', '/')}`}
+                      alt="Problem"
+                      onError={(e) => {
+                        console.error('Image load error:', e.target.src);
+                        e.target.style.display = 'none';
+                      }}
+                    />
                   </div>
                 )}
                 {selectedRequest.image_after && (
                   <div className="detail-image">
                     <label><CheckCircle size={16} /> รูปหลังซ่อม</label>
-                    <img src={`http://localhost:5000${selectedRequest.image_after}`} alt="Finished" />
+                    <img
+                      src={`http://localhost:5000${selectedRequest.image_after.replace(/\\/g, '/').replace('//', '/')}`}
+                      alt="Finished"
+                      onError={(e) => e.target.style.display = 'none'}
+                    />
                   </div>
                 )}
               </div>

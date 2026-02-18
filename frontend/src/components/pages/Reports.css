@@ -25,108 +25,149 @@
 
     @page {
         size: A4;
-        margin: 1.5cm 1.5cm 1.5cm 2.5cm;
-        /* Standard Thai Government Margins (Left 2.5cm) */
+        margin: 2cm;
+        /* Standard Formal Margin */
     }
 
     body {
         background: white !important;
         font-family: "TH Sarabun New", "Sarabun", sans-serif !important;
-        font-size: 16pt;
-        line-height: 1.2;
+        font-size: 16pt !important;
+        line-height: 1.3;
+        color: black !important;
     }
 
-    .reports-container {
-        padding: 0 !important;
+    /* Ensure the print content is visible and overlays everything */
+    .print-only,
+    .print-only * {
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .print-only {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
         margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        z-index: 99999;
+        display: block !important;
+        box-sizing: border-box;
+    }
+
+    /* Print Table Fixes - Explicitly restore table display */
+    .report-table-print {
+        display: table !important;
+        width: 100% !important;
+        border-collapse: collapse !important;
+        table-layout: fixed;
+        /* Prevents overflow */
+        word-wrap: break-word;
+        /* Wraps text */
+        margin-bottom: 20px;
+    }
+
+    .report-table-print thead {
+        display: table-header-group !important;
+    }
+
+    .report-table-print tbody {
+        display: table-row-group !important;
+    }
+
+    .report-table-print tr {
+        display: table-row !important;
+    }
+
+    .report-table-print th,
+    .report-table-print td {
+        display: table-cell !important;
+        border: 1px solid black !important;
+        /* Formal Black Border */
+        color: black !important;
+        padding: 6px 8px;
+        vertical-align: top;
+        font-size: 16pt;
+    }
+
+    .report-table-print th {
+        background-color: #f0f0f0 !important;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    /* Zebra Striping - Simplified for Formal */
+    .report-table-print tr:nth-child(even) td {
+        background-color: transparent !important;
+    }
+
+    .report-table-print .text-right {
+        text-align: right;
+    }
+
+    .report-table-print .text-center {
+        text-align: center;
+    }
+
+    /* Total Row Styling */
+    .report-table-print .row-total td {
+        background-color: #e0e0e0 !important;
+        font-weight: bold;
+    }
+
+    /* Header Typography in Print */
+    .print-only h2 {
+        font-size: 24pt;
+        color: black !important;
+        margin-bottom: 0 !important;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .print-only p {
+        font-size: 16pt;
+        color: black !important;
+        margin-top: 5px !important;
+        margin-bottom: 25px !important;
+        text-align: center;
+    }
+
+    .print-only h4 {
+        font-size: 18pt;
+        color: black !important;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        font-weight: bold;
+        border: none;
+    }
+
+    /* Hide everything primarily using visibility to keep layout tree intact */
+    body * {
+        visibility: hidden;
+    }
+
+    /* Important: Reset visibility for root containers to ensure child visibility works */
+    html,
+    body,
+    #root,
+    .supervisor-dashboard,
+    .main-content,
+    .container,
+    .reports-container {
+        visibility: visible !important;
+        overflow: visible !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        position: static !important;
+        background: transparent !important;
         box-shadow: none !important;
     }
-}
 
-/* Official Memo (Print Only) Styles */
-.memo-wrapper {
-    color: black;
-    line-height: 1.5;
-}
-
-.memo-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    margin-bottom: 20px;
-}
-
-.garuda-container {
-    margin-bottom: 10px;
-}
-
-.garuda-img {
-    width: 60px;
-    /* Standard Garuda size for memo */
-    height: auto;
-}
-
-.memo-header h1 {
-    font-size: 24pt;
-    font-weight: bold;
-    margin: 0;
-}
-
-.memo-info {
-    border-bottom: 1px solid black;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-
-.memo-info p {
-    margin: 5px 0;
-}
-
-.memo-row {
-    display: flex;
-    justify-content: space-between;
-}
-
-.memo-body {
-    margin-top: 20px;
-}
-
-.memo-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-}
-
-.memo-table th,
-.memo-table td {
-    border: 1px solid black;
-    padding: 8px 12px;
-}
-
-.memo-table th {
-    background-color: #f2f2f2 !important;
-    font-weight: bold;
-    -webkit-print-color-adjust: exact;
-}
-
-.row-total {
-    background-color: #f9f9f9 !important;
-    -webkit-print-color-adjust: exact;
-}
-
-.memo-signature {
-    margin-top: 50px;
-    text-align: right;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.signature-box {
-    margin-top: 40px;
-    text-align: center;
-    width: 300px;
+    .no-print {
+        display: none !important;
+    }
 }
 
 .icon-gap {

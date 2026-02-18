@@ -54,6 +54,19 @@ module.exports = (upload, io) => {
     }
   });
 
+  // API: ดึงรายการแจ้งซ่อมที่ยังไม่ได้รับมอบหมาย (สำหรับแสดงใน Dashboard ช่าง)
+  router.get('/unassigned', async (req, res) => {
+    try {
+      const result = await pool.query(
+        `SELECT COUNT(*) as count FROM REPAIR_REQUEST WHERE status = 'pending'`
+      );
+      res.json({ count: parseInt(result.rows[0].count) || 0 });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   // API: ดึงสถิติการแจ้งซ่อม
   router.get('/stats/:userId', async (req, res) => {
     const { userId } = req.params;
@@ -163,23 +176,64 @@ module.exports = (upload, io) => {
     }
   });
 
-  // API: แก้ไขรายการแจ้งซ่อม (เฉพาะ description, และเฉพาะสถานะ pending)
+  // API: แก้ไขรายการแจ้งซ่อม (Update Description & Location)
   router.put('/:requestId', upload.single('image'), async (req, res) => {
     const { requestId } = req.params;
-    const { description } = req.body;
+    const { description, building_id } = req.body;
 
     try {
       const check = await pool.query('SELECT status FROM REPAIR_REQUEST WHERE request_id = $1', [requestId]);
       if (check.rows.length === 0) return res.status(404).json({ message: 'ไม่พบรายการ' });
 
-      if (check.rows[0].status !== 'pending') {
-        return res.status(400).json({ message: 'สามารถแก้ไขได้เฉพาะรายการที่รอดำเนินการเท่านั้น' });
+      // Check User Role from Token
+      let userRole = 'user';
+      try {
+        const authHeader = req.headers.authorization;
+        if (authHeader) {
+          const jwt = require('jsonwebtoken');
+          const token = authHeader.split(' ')[1];
+          const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_secret_key_change_this');
+          userRole = decoded.role;
+        }
+      } catch (e) {
+        console.error('Token verification failed:', e.message);
       }
 
-      await pool.query(
-        'UPDATE REPAIR_REQUEST SET description = $1 WHERE request_id = $2',
-        [description, requestId]
-      );
+      // Logic:
+      // 1. If Admin/Supervisor -> Can edit description & building_id anytime (maybe warn if completed, but allow).
+      // 2. If User -> Can edit description only if status == 'pending'.
+
+      if (userRole !== 'admin' && userRole !== 'supervisor') {
+        if (check.rows[0].status !== 'pending') {
+          return res.status(400).json({ message: 'สามารถแก้ไขได้เฉพาะรายการที่รอดำเนินการเท่านั้น' });
+        }
+        // User can only update description
+        await pool.query(
+          'UPDATE REPAIR_REQUEST SET description = $1 WHERE request_id = $2',
+          [description, requestId]
+        );
+      } else {
+        // Admin/Supervisor can update description AND building_id
+        // Construct query dynamically based on provided fields
+        const fields = [];
+        const values = [];
+        let idx = 1;
+
+        if (description !== undefined) {
+          fields.push(`description = $${idx++}`);
+          values.push(description);
+        }
+        if (building_id !== undefined) {
+          fields.push(`building_id = $${idx++}`);
+          values.push(building_id || null);
+        }
+
+        if (fields.length > 0) {
+          values.push(requestId);
+          const query = `UPDATE REPAIR_REQUEST SET ${fields.join(', ')} WHERE request_id = $${idx}`;
+          await pool.query(query, values);
+        }
+      }
 
       res.json({ success: true, message: 'แก้ไขรายการสำเร็จ' });
     } catch (err) {
@@ -209,6 +263,8 @@ module.exports = (upload, io) => {
       res.status(500).json({ error: err.message });
     }
   });
+
+
 
   return router;
 };

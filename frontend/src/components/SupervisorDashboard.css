@@ -13,6 +13,37 @@
   --sidebar-width: 260px;
 }
 
+/* ========== PRINT STYLES ========== */
+@media print {
+
+  .sidebar,
+  .top-bar,
+  .menu-toggle,
+  .filter-tabs,
+  .no-print {
+    display: none !important;
+  }
+
+  .supervisor-dashboard,
+  .main-content,
+  .container {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  /* Ensure the print content is visible */
+  .print-only {
+    display: block !important;
+  }
+}
+
 /* ========== BASE LAYOUT WITH FIXED SIDEBAR ========== */
 .supervisor-dashboard {
   display: flex;

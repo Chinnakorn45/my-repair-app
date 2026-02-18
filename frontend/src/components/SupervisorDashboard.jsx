@@ -5,6 +5,7 @@ import TaskList from './TaskList';
 import Notifications from "./pages/AnnouncementFeed";
 import Task from "./pages/Task";
 import Reports from './pages/Reports';
+import CustomReport from './pages/CustomReport';
 import Profile from './pages/Profile';
 
 
@@ -450,6 +451,7 @@ function SupervisorDashboard({ userId, onLogout }) {
           )}
 
           {activeMenu === 'reports' && <Reports />}
+          {activeMenu === 'custom-report' && <CustomReport />}
 
           {/* ✅ Notifications Component */}
           {activeMenu === 'notifications' && <Notifications />}

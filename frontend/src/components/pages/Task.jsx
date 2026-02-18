@@ -4,7 +4,7 @@ import './Task.css';
 import {
   Clock, Wrench, CheckCircle, MapPin, User, ClipboardList,
   AlertCircle, Briefcase, ChevronRight, Save, X, Calendar,
-  Hash, Search, Camera, Inbox, FileCheck, Trash2
+  Hash, Search, Camera, Inbox, FileCheck, Trash2, Edit
 } from 'lucide-react';
 import { formatThaiDate } from '../../utils/dateUtils';
 
@@ -40,9 +40,15 @@ function Task() {
   const [repairImagePreview, setRepairImagePreview] = useState(null);
   const [technicians, setTechnicians] = useState([]);
 
+  // Edit Task State
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [buildings, setBuildings] = useState([]);
+  const [editFormData, setEditFormData] = useState({ description: '', building_id: '' });
+
   useEffect(() => {
     fetchTasks();
     fetchTechnicians();
+    fetchBuildings();
   }, []);
 
   const fetchTasks = async () => {
@@ -100,6 +106,61 @@ function Task() {
       }
     } catch (error) {
       console.error('Error fetching technicians:', error);
+    }
+  };
+
+  const fetchBuildings = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/buildings', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setBuildings(data);
+      }
+    } catch (error) {
+      console.error('Error fetching buildings:', error);
+    }
+  };
+
+  const openEditModal = (task) => {
+    setEditFormData({
+      description: task.description,
+      building_id: task.building_id || ''
+    });
+    setSelectedTask(task);
+    setShowEditModal(true);
+    setDetailTask(null); // Close detail modal
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editFormData.description.trim()) {
+      return Swal.fire('แจ้งเตือน', 'กรุณาระบุรายละเอียดงาน', 'warning');
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/repair-requests/${selectedTask.request_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(editFormData)
+      });
+
+      if (response.ok) {
+        Swal.fire({ icon: 'success', title: 'แก้ไขสำเร็จ', timer: 1500, showConfirmButton: false });
+        setShowEditModal(false);
+        fetchTasks();
+      } else {
+        const data = await response.json();
+        Swal.fire('เกิดข้อผิดพลาด', data.message || 'ไม่สามารถแก้ไขได้', 'error');
+      }
+    } catch (error) {
+      console.error('Edit error:', error);
+      Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์', 'error');
     }
   };
 
@@ -551,9 +612,18 @@ function Task() {
                   )}
 
                   {/* Delete button - always visible */}
-                  <button className="task-detail-btn danger" onClick={() => handleDeleteTask(detailTask)}>
-                    <Trash2 size={16} /> ลบรายการ
-                  </button>
+                  <div style={{ flex: 1, display: 'flex', gap: '10px' }}>
+                    {/* Edit Button - Visible for Admin/Supervisor */}
+                    {['admin', 'supervisor'].includes(localStorage.getItem('user_role')) && (
+                      <button className="task-detail-btn" style={{ background: '#f59e0b', color: 'white' }} onClick={() => openEditModal(detailTask)}>
+                        <Edit size={16} /> แก้ไข
+                      </button>
+                    )}
+
+                    <button className="task-detail-btn danger" onClick={() => handleDeleteTask(detailTask)}>
+                      <Trash2 size={16} /> ลบรายการ
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -707,6 +777,52 @@ function Task() {
             <div className="task-modal-actions">
               <button className="task-modal-btn secondary" onClick={() => setShowAssignModal(false)}>ยกเลิก</button>
               <button className="task-modal-btn primary" onClick={handleAssignTask}>ยืนยันการมอบหมาย</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===================== Edit Task Modal ===================== */}
+      {showEditModal && selectedTask && (
+        <div className="task-modal-overlay" onClick={() => setShowEditModal(false)}>
+          <div className="task-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="task-modal-header">
+              <div>
+                <h2>แก้ไขงานซ่อม</h2>
+                <p>งานเลขที่: <strong>#{selectedTask.request_id}</strong></p>
+              </div>
+              <button className="task-modal-close" onClick={() => setShowEditModal(false)}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="task-form-group">
+              <label className="task-form-label">สถานที่</label>
+              <select
+                className="task-form-select"
+                value={editFormData.building_id}
+                onChange={(e) => setEditFormData({ ...editFormData, building_id: e.target.value })}
+              >
+                <option value="">-- เลือกสถานที่ --</option>
+                {buildings.map(b => (
+                  <option key={b.id} value={b.id}>{b.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="task-form-group">
+              <label className="task-form-label">รายละเอียด</label>
+              <textarea
+                className="task-form-textarea"
+                value={editFormData.description}
+                onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                rows={4}
+              />
+            </div>
+
+            <div className="task-modal-actions">
+              <button className="task-modal-btn secondary" onClick={() => setShowEditModal(false)}>ยกเลิก</button>
+              <button className="task-modal-btn primary" onClick={handleSaveEdit}>บันทึกการแก้ไข</button>
             </div>
           </div>
         </div>

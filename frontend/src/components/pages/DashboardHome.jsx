@@ -70,7 +70,7 @@ const MapBounds = ({ markers }) => {
 
 const translateStatus = (status) => {
   const statusMap = {
-    'pending': 'รอรับเรื่อง',
+    'pending': 'รอดำเนินการ',
     'in_progress': 'กำลังดำเนินการ',
     'completed': 'ซ่อมเสร็จสิ้น',
     'pending_approval': 'รออนุมัติ'
@@ -116,16 +116,41 @@ const DashboardHome = ({ userId: propUserId }) => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
+      const role = localStorage.getItem('user_role') || 'user'; // Get Role
 
-      // 1. Get User's Repairs
-      const response = await fetch(`http://localhost:5000/api/repair-requests/${userId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      let userRepairs = [];
 
-      if (!response.ok) throw new Error("ดึงข้อมูลไม่สำเร็จ");
-      const userRepairs = await response.json();
+      if (role === 'technician') {
+        // 1. If Technician -> Fetch Assigned Tasks
+        const response = await fetch(`http://localhost:5000/api/technician/tasks`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error("ดึงข้อมูลงานซ่อมไม่สำเร็จ");
+        userRepairs = await response.json();
 
-      // 2. Get Public Active Repairs
+        // 2. Fetch Unassigned Count for "Pending" Stat
+        try {
+          const unassignedRes = await fetch(`http://localhost:5000/api/repair-requests/unassigned`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (unassignedRes.ok) {
+            const data = await unassignedRes.json();
+            // Override pending stat with global unassigned count
+            setStats(prev => ({ ...prev, pending: data.count }));
+          }
+        } catch (e) {
+          console.error("Error fetching unassigned count:", e);
+        }
+      } else {
+        // 2. If User/Admin -> Fetch Reported Tasks (Original Logic)
+        const response = await fetch(`http://localhost:5000/api/repair-requests/${userId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error("ดึงข้อมูลไม่สำเร็จ");
+        userRepairs = await response.json();
+      }
+
+      // 3. Get Public Active Repairs (Optional: Maybe skip for technician or keep? keeping for now)
       let publicRepairs = [];
       try {
         const pubRes = await fetch(`http://localhost:5000/api/repair-requests/public/in-progress`, {
@@ -199,7 +224,7 @@ const DashboardHome = ({ userId: propUserId }) => {
           <div className="stat-icon-wrapper orange"><Clock size={24} color="#FFA500" /></div>
           <div className="stat-content">
             <div className="stat-value">{stats.pending}</div>
-            <div className="stat-label">รอรับเรื่อง</div>
+            <div className="stat-label">รอดำเนินการ</div>
           </div>
         </div>
         <div className="stat-card">
@@ -303,7 +328,7 @@ const DashboardHome = ({ userId: propUserId }) => {
         <div style={{ marginTop: '12px', display: 'flex', gap: '15px', justifyContent: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#FFA500' }}></div>
-            <span style={{ fontSize: '12px' }}>รอรับเรื่อง</span>
+            <span style={{ fontSize: '12px' }}>รอดำเนินการ</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#4169E1' }}></div>

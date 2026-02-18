@@ -77,7 +77,7 @@ const MapFollower = ({ center }) => {
 
 const translateStatus = (status) => {
   const statusMap = {
-    'pending': 'รอรับเรื่อง',
+    'pending': 'รอดำเนินการ',
     'in_progress': 'กำลังดำเนินการ',
     'completed': 'ซ่อมเสร็จสิ้น',
     'pending_approval': 'รออนุมัติ'
@@ -224,7 +224,7 @@ const Map = () => {
           </div>
           <div className="map-stat-card orange">
             <div className="map-stat-value">{stats.pending}</div>
-            <div className="map-stat-label">รอรับเรื่อง</div>
+            <div className="map-stat-label">รอดำเนินการ</div>
           </div>
           <div className="map-stat-card blue">
             <div className="map-stat-value">{stats.in_progress}</div>
@@ -247,7 +247,7 @@ const Map = () => {
             className="map-filter-select"
           >
             <option value="all">ทั้งหมด ({stats.total})</option>
-            <option value="pending">รอรับเรื่อง ({stats.pending})</option>
+            <option value="pending">รอดำเนินการ ({stats.pending})</option>
             <option value="in_progress">กำลังดำเนินการ ({stats.in_progress})</option>
             <option value="completed">เสร็จสิ้น ({stats.completed})</option>
           </select>
@@ -420,7 +420,7 @@ const Map = () => {
       <div className="map-legend">
         <div className="legend-item">
           <div className="legend-color" style={{ backgroundColor: '#FFA500' }}></div>
-          <span>รอรับเรื่อง</span>
+          <span>รอดำเนินการ</span>
         </div>
         <div className="legend-item">
           <div className="legend-color" style={{ backgroundColor: '#4169E1' }}></div>

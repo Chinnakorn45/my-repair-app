@@ -1,7 +1,7 @@
 import './Sidebar.css';
 import {
   Users, Building, FileText, Settings, Bell, User,
-  LayoutDashboard, ClipboardList, Map, Wrench, Menu, X, LogOut, Clock
+  LayoutDashboard, ClipboardList, Map, Wrench, Menu, X, LogOut, Clock, Printer
 } from 'lucide-react';
 
 const Sidebar = ({
@@ -19,6 +19,7 @@ const Sidebar = ({
         { id: 'users', icon: <Users size={20} />, text: 'จัดการผู้ใช้' },
         { id: 'buildings', icon: <Building size={20} />, text: 'จัดการอาคาร' },
         { id: 'history', icon: <Clock size={20} />, text: 'ประวัติระบบ' },
+
         { id: 'settings', icon: <Settings size={20} />, text: 'ตั้งค่า' },
         { id: 'notifications', icon: <Bell size={20} />, text: 'จัดการข่าวสาร/ประกาศ' },
         { id: 'profile', icon: <User size={20} />, text: 'โปรไฟล์' }
@@ -30,6 +31,7 @@ const Sidebar = ({
         { id: 'dashboard', icon: <LayoutDashboard size={20} />, text: 'Dashboard' },
         { id: 'tasks', icon: <ClipboardList size={20} />, text: 'จัดการงานซ่อม' },
         { id: 'reports', icon: <FileText size={20} />, text: 'รายงาน' },
+        { id: 'custom-report', icon: <Printer size={20} />, text: 'พิมพ์รายงาน' },
         { id: 'notifications', icon: <Bell size={20} />, text: 'การแจ้งเตือน' },
         { id: 'profile', icon: <User size={20} />, text: 'โปรไฟล์' }
       ]

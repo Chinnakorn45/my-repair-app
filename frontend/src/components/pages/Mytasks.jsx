@@ -262,7 +262,7 @@ const MyTasks = () => {
                   <div className="task-card-thumb">
                     {task.image ? (
                       <img
-                        src={`http://localhost:5000${task.image}`}
+                        src={`http://localhost:5000${task.image.replace(/\\/g, '/').replace('//', '/')}`}
                         alt=""
                         onError={(e) => {
                           e.target.style.display = 'none';
@@ -380,7 +380,7 @@ const MyTasks = () => {
                           <Camera size={14} /> ก่อนซ่อม
                         </div>
                         <img
-                          src={`http://localhost:5000${detailTask.image}`}
+                          src={`http://localhost:5000${detailTask.image.replace(/\\/g, '/').replace('//', '/')}`}
                           alt="ก่อนซ่อม"
                           onError={(e) => e.target.style.display = 'none'}
                         />
@@ -392,7 +392,7 @@ const MyTasks = () => {
                           <CheckCircle size={14} /> หลังซ่อม
                         </div>
                         <img
-                          src={`http://localhost:5000${detailTask.image_after}`}
+                          src={`http://localhost:5000${detailTask.image_after.replace(/\\/g, '/').replace('//', '/')}`}
                           alt="หลังซ่อม"
                           onError={(e) => e.target.style.display = 'none'}
                         />
@@ -476,7 +476,7 @@ const MyTasks = () => {
                       <Camera size={14} style={{ marginRight: '5px' }} /> รูปก่อนซ่อม
                     </span>
                     <img
-                      src={`http://localhost:5000${task.image}`}
+                      src={`http://localhost:5000${task.image.replace(/\\/g, '/').replace('//', '/')}`}
                       alt="ก่อนซ่อม"
                       className="task-image-preview"
                       onError={(e) => e.target.style.display = 'none'}
