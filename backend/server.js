@@ -1,3 +1,4 @@
+process.env.TZ = 'Asia/Bangkok';
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -33,11 +34,20 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key_change_this';
 
 // ================= Multer =================
 const storage = multer.diskStorage({
-  destination: 'uploads/requests/',
+  destination: (req, file, cb) => {
+    const dir = path.join(__dirname, 'uploads', 'requests');
+    // Ensure directory exists
+    const fs = require('fs');
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
   filename: (req, file, cb) =>
     cb(null, Date.now() + path.extname(file.originalname))
 });
 const upload = multer({ storage });
+
 
 // ================= JWT Middleware =================
 const verifyToken = (req, res, next) => {
@@ -336,7 +346,7 @@ app.get('/api/admin/tasks', verifyToken, async (req, res) => {
   try {
     if (req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.status(403).json({ message: 'ไม่มีสิทธิ์เข้าถึง' });
     const { status } = req.query;
-    let query = `SELECT r.*, u.first_name AS reporter, b.name AS location_name, tech.first_name AS technician_name,
+    let query = `SELECT r.*, u.first_name AS reporter, b.name AS location_name, b.name AS location, tech.first_name AS technician_name,
        rep.image_after, rep.repair_detail
        FROM repair_request r
        LEFT JOIN "USER" u ON u.user_id = r.user_id
@@ -485,6 +495,16 @@ app.get('/api/technician/stats', verifyToken, async (req, res) => {
 io.on('connection', (socket) => {
   console.log('Socket connected:', socket.id);
   socket.on('disconnect', () => console.log('Socket disconnected:', socket.id));
+});
+
+// ================= Global Error Handler =================
+app.use((err, req, res, next) => {
+  console.error('🔥 Global Error:', err);
+  const fs = require('fs');
+  const logMessage = `[${new Date().toISOString()}] GLOBAL ERROR: ${err.message}\nStack: ${err.stack}\n\n`;
+  try { fs.appendFileSync(path.join(__dirname, 'debug_errors.log'), logMessage); } catch (e) { }
+
+  res.status(500).json({ error: err.message || 'Internal Server Error' });
 });
 
 // ================= Start Server =================

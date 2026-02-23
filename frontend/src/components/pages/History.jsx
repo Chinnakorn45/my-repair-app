@@ -185,7 +185,13 @@ const History = ({ userId }) => {
                   <div className="detail-image">
                     <label><Camera size={16} /> รูปก่อนซ่อม</label>
                     <img
-                      src={`http://localhost:5000${selectedRequest.image_url.replace(/\\/g, '/').replace('//', '/')}`}
+                      src={(() => {
+                        let path = selectedRequest.image_url || '';
+                        path = path.replace(/\\/g, '/');
+                        if (path.includes('uploads/')) path = path.substring(path.indexOf('uploads/'));
+                        else if (path.startsWith('/')) path = path.substring(1);
+                        return `http://localhost:5000/${path}`;
+                      })()}
                       alt="Problem"
                       onError={(e) => {
                         console.error('Image load error:', e.target.src);
@@ -198,7 +204,13 @@ const History = ({ userId }) => {
                   <div className="detail-image">
                     <label><CheckCircle size={16} /> รูปหลังซ่อม</label>
                     <img
-                      src={`http://localhost:5000${selectedRequest.image_after.replace(/\\/g, '/').replace('//', '/')}`}
+                      src={(() => {
+                        let path = selectedRequest.image_after || '';
+                        path = path.replace(/\\/g, '/');
+                        if (path.includes('uploads/')) path = path.substring(path.indexOf('uploads/'));
+                        else if (path.startsWith('/')) path = path.substring(1);
+                        return `http://localhost:5000/${path}`;
+                      })()}
                       alt="Finished"
                       onError={(e) => e.target.style.display = 'none'}
                     />

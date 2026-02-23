@@ -7,7 +7,13 @@ module.exports = (upload, io) => {
   // API: สร้างแจ้งซ่อมใหม่
   router.post('/', upload.single('image'), async (req, res) => {
     const { user_id, description, lat, lng, building_id } = req.body;
-    const image_path = req.file ? req.file.path : null;
+    // ✅ Fix: Force forward slashes for cross-platform compatibility
+    const image_path = req.file ? `uploads/requests/${req.file.filename}` : null;
+
+    console.log('--- New Repair Request ---');
+    console.log('Body:', req.body);
+    console.log('File:', req.file);
+    console.log('Image Path:', image_path);
 
     try {
       const result = await pool.query(
@@ -22,6 +28,11 @@ module.exports = (upload, io) => {
       res.json({ success: true, data: result.rows[0] });
     } catch (err) {
       console.error(err);
+      const fs = require('fs');
+      const path = require('path');
+      const logMessage = `[${new Date().toISOString()}] REPAIR REQUEST ERROR: ${err.message}\nStack: ${err.stack}\nBody: ${JSON.stringify(req.body)}\n\n`;
+      try { fs.appendFileSync(path.join(__dirname, '../debug_errors.log'), logMessage); } catch (e) { }
+
       res.status(500).json({ error: err.message });
     }
   });

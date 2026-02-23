@@ -42,7 +42,6 @@ const Sidebar = ({
         { id: 'dashboard', icon: <LayoutDashboard size={20} />, text: 'Dashboard' },
         { id: 'map', icon: <Map size={20} />, text: 'แผนที่งานซ่อม' },
         { id: 'my-tasks', icon: <Wrench size={20} />, text: 'งานของฉัน' },
-        { id: 'new-request', icon: <FileText size={20} />, text: 'แจ้งซ่อมใหม่' },
         { id: 'history', icon: <ClipboardList size={20} />, text: 'ประวัติงาน' },
         { id: 'notifications', icon: <Bell size={20} />, text: 'การแจ้งเตือน' },
         { id: 'profile', icon: <User size={20} />, text: 'โปรไฟล์' }

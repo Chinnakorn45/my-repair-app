@@ -14,12 +14,13 @@ router.get('/details', async (req, res) => {
 
   try {
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${longitude}`
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${longitude}`,
+      { headers: { 'User-Agent': 'RepairApp/1.0' } }
     );
     const data = await response.json();
-    
+
     // Try to get building name from various possible fields
-    const buildingName = 
+    const buildingName =
       data.address?.building ||
       data.address?.name ||
       data.address?.amenity ||
@@ -28,7 +29,7 @@ router.get('/details', async (req, res) => {
       data.address?.house_name ||
       data.address?.tourism ||
       'ไม่ระบุชื่อตึก';
-    
+
     const locationDetails = {
       address: data.address,
       displayName: data.display_name,
@@ -36,7 +37,7 @@ router.get('/details', async (req, res) => {
       street: data.address?.road || data.address?.street || 'ไม่ระบุถนน',
       area: data.address?.suburb || data.address?.neighbourhood || 'ไม่ระบุพื้นที่'
     };
-    
+
     res.json(locationDetails);
   } catch (error) {
     console.error('Reverse geocoding error:', error);

@@ -87,6 +87,8 @@ const DashboardHome = ({ userId: propUserId }) => {
   const [locationLoading, setLocationLoading] = useState(true);
   const [mapLayer, setMapLayer] = useState('map');
 
+  const [userRole, setUserRole] = useState('user');
+
   const getUserId = () => {
     if (propUserId) return propUserId;
     let id = localStorage.getItem('user_id');
@@ -116,15 +118,36 @@ const DashboardHome = ({ userId: propUserId }) => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
+
+      // ✅ ตรวจสอบ token ก่อน fetch
+      if (!token) {
+        console.error("❌ No token found, redirecting to login");
+        localStorage.removeItem('token');
+        localStorage.removeItem('user_id');
+        localStorage.removeItem('user_role');
+        window.location.href = '/login';
+        return;
+      }
+
       const role = localStorage.getItem('user_role') || 'user'; // Get Role
+      setUserRole(role); // Update state
 
       let userRepairs = [];
+      let unassignedCount = 0;
 
       if (role === 'technician') {
         // 1. If Technician -> Fetch Assigned Tasks
         const response = await fetch(`http://localhost:5000/api/technician/tasks`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (response.status === 401) {
+          console.error("❌ Token expired or invalid, redirecting to login");
+          localStorage.removeItem('token');
+          localStorage.removeItem('user_id');
+          localStorage.removeItem('user_role');
+          window.location.href = '/login';
+          return;
+        }
         if (!response.ok) throw new Error("ดึงข้อมูลงานซ่อมไม่สำเร็จ");
         userRepairs = await response.json();
 
@@ -135,8 +158,7 @@ const DashboardHome = ({ userId: propUserId }) => {
           });
           if (unassignedRes.ok) {
             const data = await unassignedRes.json();
-            // Override pending stat with global unassigned count
-            setStats(prev => ({ ...prev, pending: data.count }));
+            unassignedCount = data.count;
           }
         } catch (e) {
           console.error("Error fetching unassigned count:", e);
@@ -150,7 +172,7 @@ const DashboardHome = ({ userId: propUserId }) => {
         userRepairs = await response.json();
       }
 
-      // 3. Get Public Active Repairs (Optional: Maybe skip for technician or keep? keeping for now)
+      // 3. Get Public Active Repairs
       let publicRepairs = [];
       try {
         const pubRes = await fetch(`http://localhost:5000/api/repair-requests/public/in-progress`, {
@@ -161,18 +183,23 @@ const DashboardHome = ({ userId: propUserId }) => {
         console.warn("Public repairs fetch failed", e);
       }
 
-      // 3. Merge (User repairs take precedence)
+      // 4. Merge and Calculate Stats
       const repairMap = new Map();
       if (Array.isArray(userRepairs)) {
         userRepairs.forEach(r => repairMap.set(r.request_id, r));
 
-        // Calculate stats only from User's repairs
         const s = userRepairs.reduce((acc, curr) => {
           if (curr.status === 'pending') acc.pending++;
           else if (curr.status === 'in_progress') acc.in_progress++;
           else if (curr.status === 'completed') acc.completed++;
           return acc;
         }, { pending: 0, in_progress: 0, completed: 0 });
+
+        // ✅ FIX: For technicians, use the fetched unassigned count for "Pending"
+        if (role === 'technician') {
+          s.pending = unassignedCount;
+        }
+
         setStats(s);
       }
 
@@ -220,13 +247,15 @@ const DashboardHome = ({ userId: propUserId }) => {
 
       {/* Stats */}
       <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-icon-wrapper orange"><Clock size={24} color="#FFA500" /></div>
-          <div className="stat-content">
-            <div className="stat-value">{stats.pending}</div>
-            <div className="stat-label">รอดำเนินการ</div>
+        {userRole !== 'user' && (
+          <div className="stat-card">
+            <div className="stat-icon-wrapper orange"><Clock size={24} color="#FFA500" /></div>
+            <div className="stat-content">
+              <div className="stat-value">{stats.pending}</div>
+              <div className="stat-label">รอดำเนินการ</div>
+            </div>
           </div>
-        </div>
+        )}
         <div className="stat-card">
           <div className="stat-icon-wrapper blue"><Clock size={24} color="#4169E1" /></div>
           <div className="stat-content">

@@ -11,7 +11,10 @@ import { formatThaiDate } from '../../utils/dateUtils';
 // Normalize image path from DB into a full URL
 const getImageUrl = (path) => {
   if (!path) return null;
-  const cleaned = path.replace(/\\/g, '/');
+  let cleaned = path.replace(/\\/g, '/');
+  if (cleaned.includes('uploads/')) {
+    cleaned = cleaned.substring(cleaned.indexOf('uploads/'));
+  }
   const normalized = cleaned.startsWith('/') ? cleaned : '/' + cleaned;
   return `http://localhost:5000${normalized}`;
 };

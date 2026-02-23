@@ -27,6 +27,7 @@ function SupervisorDashboard({ userId, onLogout }) {
   const [activeTab, setActiveTab] = useState('pending');
   const [loading, setLoading] = useState(true);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [showAssignmentSheet, setShowAssignmentSheet] = useState(false);
 
   // Repair Result Modal State
@@ -335,17 +336,7 @@ function SupervisorDashboard({ userId, onLogout }) {
                   </div>
                 </div>
 
-                <div className="stat-card">
-                  <div className="stat-content">
-                    <div className="stat-info">
-                      <div className="stat-label">รออนุมัติ</div>
-                      <div className="stat-number">{stats.pending_approval}</div>
-                    </div>
-                    <div className="stat-icon-wrapper bg-success-light">
-                      <CheckCircle size={24} className="text-success" />
-                    </div>
-                  </div>
-                </div>
+
               </div>
 
               {/* Team Workload */}
@@ -399,17 +390,7 @@ function SupervisorDashboard({ userId, onLogout }) {
                   <span className="tab-badge">{stats.in_progress}</span>
                 </button>
 
-                <button
-                  onClick={() => {
-                    setActiveTab('pending_approval');
-                    fetchTasks(localStorage.getItem('token'), 'pending_approval');
-                  }}
-                  className={`filter-tab ${activeTab === 'pending_approval' ? 'active' : ''}`}
-                >
-                  <CheckCircle size={16} />
-                  <span className="tab-text">รออนุมัติปิดงาน</span>
-                  <span className="tab-badge">{stats.pending_approval}</span>
-                </button>
+
               </div>
 
               {/* Task List */}
@@ -422,16 +403,10 @@ function SupervisorDashboard({ userId, onLogout }) {
                 ) : (
                   <TaskList
                     tasks={tasks}
+                    hideActions={true}
                     onSelectTask={(task) => {
                       setSelectedTask(task);
-                      setSelectedTechnicianId(null);
-                      setShowAssignmentSheet(true);
-                    }}
-                    onSaveResult={(task) => {
-                      setSelectedTask(task);
-                      setRepairDetail('');
-                      setRepairStatus('completed');
-                      setShowRepairModal(true);
+                      setShowDetailModal(true);
                     }}
                   />
                 )}
@@ -461,56 +436,85 @@ function SupervisorDashboard({ userId, onLogout }) {
         </div>
       </main>
 
-      {/* Assignment Sheet Modal */}
-      {showAssignmentSheet && selectedTask && (
-        <div className="modal-overlay" onClick={() => setShowAssignmentSheet(false)}>
+      {/* Task Detail Modal (Read Only) */}
+      {showDetailModal && selectedTask && (
+        <div className="modal-overlay" onClick={() => setShowDetailModal(false)}>
           <div className="assignment-sheet" onClick={(e) => e.stopPropagation()}>
             <div className="sheet-header">
-              <h3 className="sheet-title">เลือกช่างเพื่อมอบหมาย</h3>
+              <h3 className="sheet-title">รายละเอียดงานซ่อม</h3>
               <button
                 className="close-btn"
-                onClick={() => setShowAssignmentSheet(false)}
+                onClick={() => setShowDetailModal(false)}
               >
                 <X size={24} />
               </button>
             </div>
 
             <div className="task-info">
-              <p className="task-info-text"><strong>งาน:</strong> {selectedTask.description}</p>
-              <p className="task-info-text"><strong>สถานที่:</strong> {selectedTask.location}</p>
+              <p className="task-info-text"><strong>รหัสงาน:</strong> #{selectedTask.request_id}</p>
+              <p className="task-info-text"><strong>รายละเอียด:</strong> {selectedTask.description}</p>
+              <p className="task-info-text"><strong>สถานที่:</strong> {selectedTask.location || selectedTask.location_name || '-'}</p>
+              <p className="task-info-text"><strong>ผู้แจ้ง:</strong> {selectedTask.reporter}</p>
+              <p className="task-info-text"><strong>สถานะ:</strong> {
+                selectedTask.status === 'pending' ? 'รอรับเรื่อง' :
+                  selectedTask.status === 'in_progress' ? 'กำลังดำเนินการ' :
+                    selectedTask.status === 'pending_approval' ? 'รออนุมัติปิดงาน' : 'เสร็จสิ้น'
+              }</p>
+              {selectedTask.technician_name && (
+                <p className="task-info-text"><strong>ช่างผู้รับผิดชอบ:</strong> {selectedTask.technician_name}</p>
+              )}
             </div>
 
-            <div className="technician-list">
-              {technicians.map((tech) => (
-                <div
-                  key={tech.id}
-                  className={`technician-option ${selectedTechnicianId === tech.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedTechnicianId(tech.id)}
-                >
-                  <div className="technician-info">
-                    <div className="technician-avatar">{tech.initials || tech.name?.charAt(0)}</div>
-                    <div>
-                      <p className="technician-name">{tech.name}</p>
-                      <p className="technician-status">{tech.status || 'พร้อมรับงาน'}</p>
-                    </div>
-                  </div>
-                  <input
-                    type="radio"
-                    name="technician"
-                    checked={selectedTechnicianId === tech.id}
-                    onChange={() => setSelectedTechnicianId(tech.id)}
-                  />
-                </div>
-              ))}
-            </div>
+            {(selectedTask.image_before_path || selectedTask.image_url) && (
+              <div className="image-section" style={{ marginTop: '15px' }}>
+                <p><strong>รูปภาพแจ้งซ่อม:</strong></p>
+                <img
+                  src={(() => {
+                    let path = selectedTask.image_url || selectedTask.image_before_path || '';
+                    path = path.replace(/\\/g, '/');
+                    if (path.includes('uploads/')) path = path.substring(path.indexOf('uploads/'));
+                    else if (path.startsWith('/')) path = path.substring(1);
+                    return `http://localhost:5000/${path}`;
+                  })()}
+                  alt="Before Repair"
+                  style={{ width: '100%', borderRadius: '8px', marginTop: '5px' }}
+                />
+              </div>
+            )}
 
-            <button
-              className="confirm-btn"
-              onClick={handleAssignTask}
-              disabled={!selectedTechnicianId || assigning}
-            >
-              {assigning ? 'กำลังมอบหมาย...' : 'ยืนยันการมอบหมาย'}
-            </button>
+            {selectedTask.image_after && (
+              <div className="image-section" style={{ marginTop: '15px' }}>
+                <p><strong>รูปภาพหลังซ่อม:</strong></p>
+                <img
+                  src={(() => {
+                    let path = selectedTask.image_after || '';
+                    path = path.replace(/\\/g, '/');
+                    if (path.includes('uploads/')) path = path.substring(path.indexOf('uploads/'));
+                    else if (path.startsWith('/')) path = path.substring(1);
+                    return `http://localhost:5000/${path}`;
+                  })()}
+                  alt="After Repair"
+                  style={{ width: '100%', borderRadius: '8px', marginTop: '5px' }}
+                />
+              </div>
+            )}
+
+            {selectedTask.repair_detail && (
+              <div style={{ marginTop: '15px', padding: '10px', background: '#f8fafc', borderRadius: '8px' }}>
+                <p><strong>รายละเอียดการซ่อม:</strong></p>
+                <p>{selectedTask.repair_detail}</p>
+              </div>
+            )}
+
+            <div style={{ marginTop: '20px', textAlign: 'right' }}>
+              <button
+                className="confirm-btn"
+                onClick={() => setShowDetailModal(false)}
+                style={{ width: 'auto', padding: '8px 20px' }}
+              >
+                ปิด
+              </button>
+            </div>
           </div>
         </div>
       )}

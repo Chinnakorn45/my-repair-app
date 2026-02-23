@@ -20,7 +20,15 @@ const MyRequests = ({ userId }) => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/repair-requests/${userId}`, {
+      const currentUserId = userId || localStorage.getItem('user_id');
+
+      if (!currentUserId) {
+        console.error("User ID not found");
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch(`http://localhost:5000/api/repair-requests/${currentUserId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -134,8 +142,13 @@ const MyRequests = ({ userId }) => {
   return (
     <div className="my-requests-container">
       <div className="page-header">
-        <h1>รายการแจ้งซ่อมของฉัน</h1>
-        <p className="subtitle">ติดตามสถานะงานซ่อมที่กำลังดำเนินการ</p>
+        <div>
+          <h1>รายการแจ้งซ่อมของฉัน</h1>
+          <p className="subtitle">ติดตามสถานะงานซ่อมที่กำลังดำเนินการ</p>
+        </div>
+        <button className="refresh-btn" onClick={fetchMyRequests} title="รีเฟรชข้อมูล">
+          🔄 รีเฟรช
+        </button>
       </div>
 
       {loading ? (
@@ -146,7 +159,9 @@ const MyRequests = ({ userId }) => {
       ) : requests.length === 0 ? (
         <div className="empty-state">
           <AlertCircle size={48} />
-          <p>ไม่มีรายการแจ้งซ่อมที่กำลังดำเนินการ</p>
+          <h3>ไม่พบรายการแจ้งซ่อมที่กำลังดำเนินการ</h3>
+          <p>หากคุณมีรายการที่ซ่อมเสร็จแล้ว สามารถดูได้ที่เมนู "ประวัติ"</p>
+          <button className="refresh-btn-small" onClick={fetchMyRequests}>ลองรีเฟรชอีกครั้ง</button>
         </div>
       ) : (
         <div className="requests-list">
@@ -209,7 +224,20 @@ const MyRequests = ({ userId }) => {
 
               {selectedRequest.image_url && !isEditing && (
                 <div className="detail-image">
-                  <img src={`http://localhost:5000${selectedRequest.image_url}`} alt="Problem" />
+                  <img
+                    src={(() => {
+                      let path = selectedRequest.image_url || '';
+                      path = path.replace(/\\/g, '/'); // Normalize slashes
+                      if (path.includes('uploads/')) {
+                        path = path.substring(path.indexOf('uploads/')); // Strip absolute path part
+                      } else if (path.startsWith('/')) {
+                        path = path.substring(1);
+                      }
+                      return `http://localhost:5000/${path}`;
+                    })()}
+                    alt="Problem"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
                 </div>
               )}
 

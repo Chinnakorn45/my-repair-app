@@ -90,7 +90,16 @@ function NewRepairRequest({ userId, onCancel }) {
           timer: 2000,
           showConfirmButton: false
         });
-        if (onCancel) onCancel(); // กลับหน้าหลัก
+
+        // Reset Form
+        setDesc('');
+        setPos(null);
+        setFile(null);
+        setFilePreview(null);
+        setNearestBuilding(null);
+        setLocationDetails(null);
+
+        if (onCancel) onCancel(); // กลับหน้าหลัก (ถ้ามี)
       } else {
         const errData = await response.json();
         Swal.fire('เกิดข้อผิดพลาด', errData.message || 'ไม่สามารถส่งข้อมูลได้', 'error');
@@ -129,49 +138,9 @@ function NewRepairRequest({ userId, onCancel }) {
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* รายละเอียดปัญหา */}
-          <div className="new-repair-form-group">
-            <label className="new-repair-label">รายละเอียดการเสีย *</label>
-            <textarea
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-              required
-              placeholder="อธิบายปัญหาที่เกิดขึ้น เช่น หลอดไฟทางเดินชั้น 2 ดับ..."
-              className="new-repair-textarea"
-            />
-          </div>
-
-          {/* ส่วนอัปโหลดรูปภาพ */}
-          <div className="new-repair-form-group">
-            <label className="new-repair-label">รูปภาพความเสียหาย *</label>
-            <div className="new-repair-file-wrapper">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="new-repair-file-input"
-                id="file-input"
-              />
-              <label htmlFor="file-input" className="new-repair-file-trigger">
-                {filePreview ? (
-                  // ✅ เพิ่ม Container ครอบรูปภาพ
-                  <div className="image-preview-container">
-                    <img src={filePreview} alt="Preview" className="image-preview-on-form" />
-                  </div>
-                ) : (
-                  <div className="upload-placeholder">
-                    <span className="icon"><Camera size={32} /></span>
-                    <span className="text">คลิกเพื่อถ่ายรูปหรือเลือกรูปภาพ</span>
-                  </div>
-                )}
-              </label>
-            </div>
-            {file && <div className="file-success-text">✓ เลือกไฟล์เรียบร้อย: {file.name}</div>}
-          </div>
-
           {/* แผนที่เลือกตำแหน่ง */}
           <div className="new-repair-form-group">
-            <label className="new-repair-label">ระบุตำแหน่งบนแผนที่ * (แสดงจุดที่กำลังซ่อมด้วย 🔧)</label>
+            <label className="new-repair-label">ระบุตำแหน่งบนแผนที่</label>
             <div className="map-picker-container">
               <MapPicker
                 position={pos}
@@ -214,6 +183,46 @@ function NewRepairRequest({ userId, onCancel }) {
                 )}
               </div>
             )}
+          </div>
+
+          {/* รายละเอียดปัญหา */}
+          <div className="new-repair-form-group">
+            <label className="new-repair-label">รายละเอียดการเสีย *</label>
+            <textarea
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              required
+              placeholder="อธิบายปัญหาที่เกิดขึ้น เช่น หลอดไฟทางเดินชั้น 2 ดับ..."
+              className="new-repair-textarea"
+            />
+          </div>
+
+          {/* ส่วนอัปโหลดรูปภาพ */}
+          <div className="new-repair-form-group">
+            <label className="new-repair-label">รูปภาพความเสียหาย *</label>
+            <div className="new-repair-file-wrapper">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="new-repair-file-input"
+                id="file-input"
+              />
+              <label htmlFor="file-input" className="new-repair-file-trigger">
+                {filePreview ? (
+                  // ✅ เพิ่ม Container ครอบรูปภาพ
+                  <div className="image-preview-container">
+                    <img src={filePreview} alt="Preview" className="image-preview-on-form" />
+                  </div>
+                ) : (
+                  <div className="upload-placeholder">
+                    <span className="icon"><Camera size={32} /></span>
+                    <span className="text">คลิกเพื่อถ่ายรูปหรือเลือกรูปภาพ</span>
+                  </div>
+                )}
+              </label>
+            </div>
+            {file && <div className="file-success-text">✓ เลือกไฟล์เรียบร้อย: {file.name}</div>}
           </div>
 
           {/* ปุ่มควบคุม */}

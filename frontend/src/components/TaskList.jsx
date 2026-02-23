@@ -2,7 +2,7 @@
 import { Droplets, Zap, Thermometer, Hammer, Wrench, Clock, User, UserCheck } from 'lucide-react';
 import { formatTimeAgo } from '../utils/dateUtils';
 
-function TaskList({ tasks, onSelectTask, onSaveResult }) {
+function TaskList({ tasks, onSelectTask, onSaveResult, hideActions }) {
   const getPriorityBadge = (priority) => {
     const colors = {
       'urgent': { bg: '#fee2e2', text: '#991b1b', label: 'เร่งด่วน' },
@@ -75,7 +75,7 @@ function TaskList({ tasks, onSelectTask, onSaveResult }) {
             </div>
 
             <div style={styles.cardActions}>
-              {task.status === 'pending' && (
+              {!hideActions && task.status === 'pending' && (
                 <button
                   style={{
                     ...styles.actionBtn,
@@ -90,7 +90,7 @@ function TaskList({ tasks, onSelectTask, onSaveResult }) {
                 </button>
               )}
 
-              {task.status === 'in_progress' && (
+              {!hideActions && task.status === 'in_progress' && (
                 task.technician_name && !task.is_external ? (
                   <div style={{ textAlign: 'center', padding: '10px', color: '#0284c7', fontWeight: 'bold', fontSize: '14px' }}>
                     🔧 มอบหมายให้ {task.technician_name} แล้ว
@@ -109,6 +109,12 @@ function TaskList({ tasks, onSelectTask, onSaveResult }) {
                     💾 บันทึกผลการซ่อม
                   </button>
                 )
+              )}
+
+              {hideActions && (
+                <div style={{ textAlign: 'center', padding: '10px', color: '#64748b', fontSize: '14px' }}>
+                  คลิกเพื่อดูรายละเอียด
+                </div>
               )}
             </div>
           </div>

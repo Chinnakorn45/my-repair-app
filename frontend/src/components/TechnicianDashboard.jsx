@@ -81,8 +81,7 @@ const TechnicianDashboard = () => {
         return <MyTasks />;
       case 'map':
         return <MapComponent />;
-      case 'new-request':
-        return <NewRepairRequest />;
+
       case 'history':
         return <History />;
       case 'notifications':
@@ -131,7 +130,7 @@ const TechnicianDashboard = () => {
             {activeMenu === 'dashboard' && <><LayoutDashboard size={28} className="icon-gap" /> Dashboard</>}
             {activeMenu === 'map' && <><Map size={28} className="icon-gap" /> แผนที่งานซ่อม</>}
             {activeMenu === 'my-tasks' && <><Wrench size={28} className="icon-gap" /> งานของฉัน</>}
-            {activeMenu === 'new-request' && <><FileText size={28} className="icon-gap" /> แจ้งซ่อมใหม่</>}
+
             {activeMenu === 'history' && <><ClipboardList size={28} className="icon-gap" /> ประวัติงาน</>}
             {activeMenu === 'notifications' && <><Bell size={28} className="icon-gap" /> การแจ้งเตือน</>}
             {activeMenu === 'profile' && <><User size={28} className="icon-gap" /> โปรไฟล์</>}
