@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 import Sidebar from './Sidebar';
 import './UserDashboard.css';
 import {
-  LayoutDashboard, FileText, ClipboardList, Clock, Bell, User, Menu
+  LayoutDashboard, FileText, ClipboardList, Clock, Bell, User, Menu, BookOpen
 } from 'lucide-react';
 
 // ✅ Import หน้าแยกจากโฟลเดอร์ pages
@@ -17,6 +17,7 @@ import NewRequest from "./pages/NewRepairRequest";
 
 // ✅ Import AnnouncementFeed
 import Notifications from "./pages/AnnouncementFeed";
+import UserGuide from './pages/UserGuide';
 
 const UserDashboard = ({ userId, onLogout }) => {
   const [activeMenu, setActiveMenu] = useState('dashboard');
@@ -87,6 +88,7 @@ const UserDashboard = ({ userId, onLogout }) => {
       case 'history': return <><Clock size={28} className="icon-gap" /> ประวัติ</>;
       case 'notifications': return <><Bell size={28} className="icon-gap" /> การแจ้งเตือน</>;
       case 'profile': return <><User size={28} className="icon-gap" /> โปรไฟล์</>;
+      case 'guide': return <><BookOpen size={28} className="icon-gap" /> คู่มือการใช้งาน</>;
       default: return 'ระบบจัดการงานซ่อม';
     }
   };
@@ -124,6 +126,8 @@ const UserDashboard = ({ userId, onLogout }) => {
         return <Notifications />;
       case 'profile':
         return <Profile userId={userId} />;
+      case 'guide':
+        return <UserGuide userRole="user" />;
       default:
         return <DashboardHome userId={userId} />;
     }
@@ -139,6 +143,7 @@ const UserDashboard = ({ userId, onLogout }) => {
         setSidebarOpen={setSidebarOpen}
         onLogout={handleLogout}
         userRole={userRole}
+        userName={userName}
       />
 
       <main className="main-content">

@@ -7,7 +7,7 @@ import AnnouncementManager from './pages/AnnouncementManager';
 import {
   Users, Building, FileText, Settings as SettingsIcon, Bell, User, LayoutDashboard,
   Search, Filter, MapPin, Trash, Pencil, UserPlus, LogOut, Shield, Wrench, Briefcase, Menu,
-  ClipboardList, Clock, TrendingUp, Mail, Phone, Save, X
+  ClipboardList, Clock, TrendingUp, Mail, Phone, Save, X, BookOpen, CheckCircle, AlertCircle, BarChart2, Activity
 } from 'lucide-react';
 
 import TaskList from './TaskList';
@@ -17,6 +17,7 @@ import Reports from './pages/Reports';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import CustomReport from './pages/CustomReport';
+import UserGuide from './pages/UserGuide';
 
 const BuildingManager = lazy(() => import('./BuildingManager'));
 
@@ -40,13 +41,62 @@ export default function AdminDashboard({ userId, onLogout }) {
   });
 
   // States for system settings
-  const [activeMenu, setActiveMenu] = useState('users');
+  const [activeMenu, setActiveMenu] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userName, setUserName] = useState('');
+
+  // Dashboard states
+  const [dashStats, setDashStats] = useState({ total: 0, pending: 0, in_progress: 0, pending_approval: 0, completed: 0 });
+  const [teamWorkload, setTeamWorkload] = useState([]);
+  const [recentTasks, setRecentTasks] = useState([]);
+  const [dashLoading, setDashLoading] = useState(true);
 
   // Fetch popup on mount
   useEffect(() => {
     fetchPopup();
+    fetchDashboardData();
+
+    // Fetch user name
+    const fetchUserName = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const uid = userId || localStorage.getItem('user_id');
+        const res = await fetch(`http://localhost:5000/api/users/${uid}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUserName(data.first_name || data.username);
+        }
+      } catch (e) { console.error(e); }
+    };
+    fetchUserName();
   }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setDashLoading(true);
+      const token = localStorage.getItem('token');
+      const headers = { 'Authorization': `Bearer ${token}` };
+
+      const [statsRes, workloadRes, tasksRes] = await Promise.all([
+        fetch('http://localhost:5000/api/admin/stats', { headers }),
+        fetch('http://localhost:5000/api/admin/team-workload', { headers }),
+        fetch('http://localhost:5000/api/admin/tasks?status=pending', { headers })
+      ]);
+
+      if (statsRes.ok) setDashStats(await statsRes.json());
+      if (workloadRes.ok) setTeamWorkload(await workloadRes.json());
+      if (tasksRes.ok) {
+        const allTasks = await tasksRes.json();
+        setRecentTasks(allTasks.slice(0, 5));
+      }
+    } catch (err) {
+      console.error('Dashboard fetch error:', err);
+    } finally {
+      setDashLoading(false);
+    }
+  };
 
   const fetchPopup = async () => {
     try {
@@ -297,6 +347,7 @@ export default function AdminDashboard({ userId, onLogout }) {
           setSidebarOpen={setSidebarOpen}
           onLogout={handleLogout}
           userRole="admin"
+          userName={userName}
         />
 
         <main className="main-content">
@@ -308,15 +359,155 @@ export default function AdminDashboard({ userId, onLogout }) {
               <Menu size={24} />
             </button>
             <h1 className="page-title">
+              {activeMenu === 'dashboard' && <><LayoutDashboard size={28} className="icon-gap" /> Dashboard</>}
               {activeMenu === 'users' && <><Users size={28} className="icon-gap" /> จัดการผู้ใช้งานและสิทธิ์</>}
               {activeMenu === 'buildings' && <><Building size={28} className="icon-gap" /> จัดการข้อมูลตึก</>}
               {activeMenu === 'history' && <><Clock size={28} className="icon-gap" /> ประวัติระบบ</>}
               {activeMenu === 'settings' && <><SettingsIcon size={28} className="icon-gap" /> ตั้งค่า</>}
               {activeMenu === 'notifications' && <><Bell size={28} className="icon-gap" /> จัดการข่าวสาร/ประกาศ</>}
-
               {activeMenu === 'profile' && <><User size={28} className="icon-gap" /> โปรไฟล์</>}
+              {activeMenu === 'guide' && <><BookOpen size={28} className="icon-gap" /> คู่มือการใช้งาน</>}
             </h1>
           </div>
+
+          {/* ========== DASHBOARD VIEW ========== */}
+          {activeMenu === 'dashboard' && (
+            <div className="container admin-dash-home">
+              {dashLoading ? (
+                <div className="loading-message" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '80px 20px' }}>
+                  <div className="spinner-small" style={{ width: 40, height: 40, marginBottom: 16 }}></div>
+                  <p>กำลังโหลดข้อมูล...</p>
+                </div>
+              ) : (
+                <>
+                  {/* Overview Banner */}
+                  <div className="adh-overview">
+                    <div className="adh-overview-left">
+                      <span className="adh-overview-label">สรุปภาพรวมระบบ</span>
+                      <span className="adh-overview-total">{dashStats.total || 0}</span>
+                      <span className="adh-overview-sub">งานแจ้งซ่อมทั้งหมด</span>
+                    </div>
+                    <div className="adh-overview-right">
+                      <svg width="80" height="80" viewBox="0 0 80 80">
+                        <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="7" />
+                        <circle cx="40" cy="40" r="32"
+                          fill="none"
+                          stroke={(() => {
+                            const total = dashStats.total || 0;
+                            const rate = total > 0 ? (dashStats.completed || 0) / total * 100 : 0;
+                            return rate >= 70 ? '#34d399' : rate >= 40 ? '#fbbf24' : '#f87171';
+                          })()}
+                          strokeWidth="7"
+                          strokeDasharray={2 * Math.PI * 32}
+                          strokeDashoffset={(() => {
+                            const total = dashStats.total || 0;
+                            const rate = total > 0 ? (dashStats.completed || 0) / total * 100 : 0;
+                            return 2 * Math.PI * 32 - (rate / 100) * 2 * Math.PI * 32;
+                          })()}
+                          strokeLinecap="round"
+                          transform="rotate(-90 40 40)"
+                          style={{ transition: 'stroke-dashoffset 1s ease' }}
+                        />
+                        <text x="40" y="37" textAnchor="middle" style={{ fontSize: '16px', fontWeight: 800, fill: '#fff' }}>
+                          {(() => {
+                            const total = dashStats.total || 0;
+                            return total > 0 ? ((dashStats.completed || 0) / total * 100).toFixed(0) : 0;
+                          })()}%
+                        </text>
+                        <text x="40" y="51" textAnchor="middle" style={{ fontSize: '10px', fill: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>สำเร็จ</text>
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Stat Cards */}
+                  <div className="adh-stats-grid">
+                    <div className="adh-stat-card adh-stat-pending">
+                      <div className="adh-stat-icon"><Clock size={24} /></div>
+                      <div className="adh-stat-info">
+                        <span className="adh-stat-number">{dashStats.pending}</span>
+                        <span className="adh-stat-label">รอมอบหมาย</span>
+                      </div>
+                    </div>
+                    <div className="adh-stat-card adh-stat-progress">
+                      <div className="adh-stat-icon"><Wrench size={24} /></div>
+                      <div className="adh-stat-info">
+                        <span className="adh-stat-number">{dashStats.in_progress}</span>
+                        <span className="adh-stat-label">กำลังดำเนินการ</span>
+                      </div>
+                    </div>
+                    <div className="adh-stat-card adh-stat-done">
+                      <div className="adh-stat-icon"><CheckCircle size={24} /></div>
+                      <div className="adh-stat-info">
+                        <span className="adh-stat-number">{dashStats.completed || 0}</span>
+                        <span className="adh-stat-label">เสร็จสิ้น</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Two-Column Section: Users + Workload */}
+                  <div className="adh-two-col">
+                    {/* User Role Distribution */}
+                    <div className="adh-section">
+                      <h3 className="adh-section-title"><Users size={18} /> สรุปผู้ใช้ในระบบ</h3>
+                      <div className="adh-role-grid">
+                        {[
+                          { role: 'user', label: 'ผู้แจ้งซ่อม', icon: <User size={20} />, color: '#3b82f6', bg: '#dbeafe' },
+                          { role: 'technician', label: 'ช่างเทคนิค', icon: <Wrench size={20} />, color: '#f59e0b', bg: '#fef3c7' },
+                          { role: 'supervisor', label: 'หัวหน้างาน', icon: <Briefcase size={20} />, color: '#8b5cf6', bg: '#ede9fe' },
+                          { role: 'admin', label: 'ผู้ดูแลระบบ', icon: <Shield size={20} />, color: '#ef4444', bg: '#fee2e2' }
+                        ].map(r => (
+                          <div key={r.role} className="adh-role-card">
+                            <div className="adh-role-icon" style={{ background: r.bg, color: r.color }}>{r.icon}</div>
+                            <div className="adh-role-info">
+                              <span className="adh-role-count">{users.filter(u => u.role === r.role).length}</span>
+                              <span className="adh-role-label">{r.label}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Team Workload */}
+                    <div className="adh-section">
+                      <h3 className="adh-section-title"><BarChart2 size={18} /> ภาระงานทีมช่าง</h3>
+                      {teamWorkload.length === 0 ? (
+                        <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>ยังไม่มีข้อมูลทีมช่าง</p>
+                      ) : (
+                        <div className="adh-workload-list">
+                          {teamWorkload.map((tech, idx) => (
+                            <div key={idx} className="adh-workload-item">
+                              <div className="adh-workload-user">
+                                <div className="adh-wl-avatar" style={{
+                                  background: tech.tasks > 5 ? 'linear-gradient(135deg, #fecaca, #fca5a5)' :
+                                    tech.tasks > 0 ? 'linear-gradient(135deg, #dbeafe, #bfdbfe)' :
+                                      'linear-gradient(135deg, #dcfce7, #bbf7d0)',
+                                  color: tech.tasks > 5 ? '#dc2626' : tech.tasks > 0 ? '#2563eb' : '#16a34a'
+                                }}>
+                                  {tech.name?.charAt(0) || '?'}
+                                </div>
+                                <span className="adh-wl-name">{tech.name}</span>
+                              </div>
+                              <div className="adh-wl-bar-wrap">
+                                <div className="adh-wl-bar" style={{
+                                  width: `${Math.min((tech.tasks / 10) * 100, 100)}%`,
+                                  background: tech.tasks > 5
+                                    ? 'linear-gradient(90deg, #f87171, #ef4444)'
+                                    : tech.tasks > 0
+                                      ? 'linear-gradient(90deg, #60a5fa, #3b82f6)'
+                                      : 'linear-gradient(90deg, #34d399, #10b981)'
+                                }}></div>
+                              </div>
+                              <span className="adh-wl-count">{tech.tasks} งาน</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
 
           {activeMenu === 'users' && (
             <div className="container">
@@ -440,6 +631,7 @@ export default function AdminDashboard({ userId, onLogout }) {
             </div>
           )}
           {activeMenu === 'settings' && <Settings />}
+          {activeMenu === 'guide' && <UserGuide userRole="admin" />}
 
         </main>
       </div>

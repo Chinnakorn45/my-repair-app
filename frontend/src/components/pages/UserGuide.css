@@ -1,0 +1,273 @@
+.user-guide {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ── Header ── */
+.guide-header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 32px 24px;
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    border-radius: 16px;
+    color: white;
+}
+
+.guide-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+}
+
+.guide-header p {
+    opacity: 0.9;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* ── Role Tabs ── */
+.guide-role-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.guide-role-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 50px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.guide-role-tab:hover {
+    border-color: #4F46E5;
+    color: #4F46E5;
+    background: #f0f0ff;
+}
+
+.guide-role-tab.active {
+    background: #4F46E5;
+    border-color: #4F46E5;
+    color: white;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+/* ── Section Cards ── */
+.guide-section {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
+}
+
+.guide-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.guide-section-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.guide-section-icon.blue {
+    background: #EFF6FF;
+    color: #3B82F6;
+}
+
+.guide-section-icon.green {
+    background: #F0FDF4;
+    color: #22C55E;
+}
+
+.guide-section-icon.orange {
+    background: #FFF7ED;
+    color: #F97316;
+}
+
+.guide-section-icon.purple {
+    background: #FAF5FF;
+    color: #A855F7;
+}
+
+.guide-section-icon.red {
+    background: #FEF2F2;
+    color: #EF4444;
+}
+
+.guide-section-icon.indigo {
+    background: #EEF2FF;
+    color: #6366F1;
+}
+
+.guide-section-icon.teal {
+    background: #F0FDFA;
+    color: #14B8A6;
+}
+
+.guide-section-header h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+/* ── Steps ── */
+.guide-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: step-counter;
+}
+
+.guide-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f8fafc;
+    counter-increment: step-counter;
+}
+
+.guide-step:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.step-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #4F46E5;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content strong {
+    color: #1e293b;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+}
+
+.step-content p {
+    color: #64748b;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ── Tips Box ── */
+.guide-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #FFFBEB;
+    border-radius: 10px;
+    border: 1px solid #FDE68A;
+    margin-top: 16px;
+}
+
+.guide-tip-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.guide-tip p {
+    color: #92400E;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ── Contact / Footer ── */
+.guide-footer {
+    text-align: center;
+    padding: 24px;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-top: 8px;
+}
+
+.guide-footer h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+}
+
+.guide-footer p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin: 4px 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .user-guide {
+        padding: 12px;
+    }
+
+    .guide-header {
+        padding: 24px 16px;
+    }
+
+    .guide-header h2 {
+        font-size: 1.35rem;
+    }
+
+    .guide-role-tab {
+        padding: 8px 14px;
+        font-size: 0.82rem;
+    }
+
+    .guide-section {
+        padding: 16px;
+    }
+
+    .guide-section-header h3 {
+        font-size: 1rem;
+    }
+
+    .step-content strong {
+        font-size: 0.88rem;
+    }
+
+    .step-content p {
+        font-size: 0.82rem;
+    }
+}

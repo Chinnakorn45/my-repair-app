@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import {
-  LayoutDashboard, Map, ClipboardList, FileText, Bell, User, Menu, Wrench
+  LayoutDashboard, Map, ClipboardList, FileText, Bell, User, Menu, Wrench, BookOpen
 } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Dashboard from './pages/DashboardHome';
@@ -11,11 +11,13 @@ import NewRepairRequest from './pages/NewRepairRequest';
 import History from './pages/History';
 import Notifications from './pages/AnnouncementFeed';
 import Profile from './pages/Profile';
+import UserGuide from './pages/UserGuide';
 import './TechnicianDashboard.css';
 
 const TechnicianDashboard = () => {
   const [activeMenu, setActiveMenu] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userName, setUserName] = useState('');
 
   // ดึง Role และ User ID จาก localStorage
   const userRole = localStorage.getItem('user_role') || 'technician';
@@ -51,6 +53,21 @@ const TechnicianDashboard = () => {
     };
 
     fetchPopup();
+
+    // Fetch user name
+    const fetchUserName = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`http://localhost:5000/api/users/${userId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUserName(data.first_name || data.username);
+        }
+      } catch (e) { console.error(e); }
+    };
+    if (userId) fetchUserName();
   }, []);
 
   const handleLogout = () => {
@@ -86,6 +103,8 @@ const TechnicianDashboard = () => {
         return <History />;
       case 'notifications':
         return <Notifications />;
+      case 'guide':
+        return <UserGuide userRole="technician" />;
       case 'profile':
         return userId ? (
           <Profile userId={userId} />
@@ -117,6 +136,7 @@ const TechnicianDashboard = () => {
         setSidebarOpen={setSidebarOpen}
         onLogout={handleLogout}
         userRole={userRole}
+        userName={userName}
       />
 
       {/* Main Content */}
@@ -133,6 +153,7 @@ const TechnicianDashboard = () => {
 
             {activeMenu === 'history' && <><ClipboardList size={28} className="icon-gap" /> ประวัติงาน</>}
             {activeMenu === 'notifications' && <><Bell size={28} className="icon-gap" /> การแจ้งเตือน</>}
+            {activeMenu === 'guide' && <><BookOpen size={28} className="icon-gap" /> คู่มือการใช้งาน</>}
             {activeMenu === 'profile' && <><User size={28} className="icon-gap" /> โปรไฟล์</>}
           </h1>
         </div>

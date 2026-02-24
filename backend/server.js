@@ -313,12 +313,14 @@ app.get('/api/admin/stats', verifyToken, async (req, res) => {
     if (req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.status(403).json({ message: 'ไม่มีสิทธิ์เข้าถึง' });
     const result = await pool.query(
       `SELECT 
+        COUNT(*)::int AS total,
         COUNT(CASE WHEN status = 'pending' THEN 1 END)::int AS pending,
         COUNT(CASE WHEN status = 'in_progress' THEN 1 END)::int AS in_progress,
-        COUNT(CASE WHEN status = 'pending_approval' THEN 1 END)::int AS pending_approval
+        COUNT(CASE WHEN status = 'pending_approval' THEN 1 END)::int AS pending_approval,
+        COUNT(CASE WHEN status = 'completed' THEN 1 END)::int AS completed
        FROM repair_request`
     );
-    res.json(result.rows[0] || { pending: 0, in_progress: 0, pending_approval: 0 });
+    res.json(result.rows[0] || { total: 0, pending: 0, in_progress: 0, pending_approval: 0, completed: 0 });
   } catch (err) {
     console.error('Get admin stats error:', err);
     res.status(500).json({ error: err.message });

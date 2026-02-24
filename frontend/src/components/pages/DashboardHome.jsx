@@ -364,8 +364,8 @@ const DashboardHome = ({ userId: propUserId }) => {
             <span style={{ fontSize: '12px' }}>กำลังดำเนินการ</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#32CD32' }}></div>
-            <span style={{ fontSize: '12px' }}>เสร็จสิ้น</span>
+            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#CB2B3E' }}></div>
+            <span style={{ fontSize: '12px' }}>ตำแหน่งปัจจุบัน</span>
           </div>
         </div>
       </div>

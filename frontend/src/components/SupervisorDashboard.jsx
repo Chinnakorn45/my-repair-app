@@ -7,20 +7,23 @@ import Task from "./pages/Task";
 import Reports from './pages/Reports';
 import CustomReport from './pages/CustomReport';
 import Profile from './pages/Profile';
+import UserGuide from './pages/UserGuide';
 
 
 
 import './SupervisorDashboard.css';
 import {
   Menu, Bell, Clock, Wrench, CheckCircle, X,
-  BarChart2, Users, FileText, User, LayoutDashboard, ClipboardList, TrendingUp, Save
+  BarChart2, Users, FileText, User, LayoutDashboard, ClipboardList, TrendingUp, Save, BookOpen
 } from 'lucide-react';
 
 function SupervisorDashboard({ userId, onLogout }) {
   const [stats, setStats] = useState({
+    total: 0,
     pending: 0,
     in_progress: 0,
-    pending_approval: 0
+    pending_approval: 0,
+    completed: 0
   });
   const [teamWorkload, setTeamWorkload] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -40,6 +43,7 @@ function SupervisorDashboard({ userId, onLogout }) {
   const [assigning, setAssigning] = useState(false);
   const [activeMenu, setActiveMenu] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userName, setUserName] = useState('');
 
   // Get user role from localStorage
   const userRole = localStorage.getItem('user_role') || 'supervisor';
@@ -47,6 +51,22 @@ function SupervisorDashboard({ userId, onLogout }) {
   useEffect(() => {
     fetchData();
     fetchPopup();
+
+    // Fetch user name
+    const fetchUserName = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const uid = userId || localStorage.getItem('user_id');
+        const res = await fetch(`http://localhost:5000/api/users/${uid}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUserName(data.first_name || data.username);
+        }
+      } catch (e) { console.error(e); }
+    };
+    fetchUserName();
   }, [userId]);
 
   const fetchPopup = async () => {
@@ -287,6 +307,7 @@ function SupervisorDashboard({ userId, onLogout }) {
         setSidebarOpen={setSidebarOpen}
         onLogout={handleLogout}
         userRole={userRole}
+        userName={userName}
       />
 
       {/* Main Content */}
@@ -302,6 +323,7 @@ function SupervisorDashboard({ userId, onLogout }) {
             {activeMenu === 'reports' && <><TrendingUp size={28} className="icon-gap" /> รายงาน</>}
             {activeMenu === 'notifications' && <><Bell size={28} className="icon-gap" /> การแจ้งเตือน</>}
             {activeMenu === 'profile' && <><User size={28} className="icon-gap" /> โปรไฟล์</>}
+            {activeMenu === 'guide' && <><BookOpen size={28} className="icon-gap" /> คู่มือการใช้งาน</>}
           </h1>
 
         </div>
@@ -310,61 +332,135 @@ function SupervisorDashboard({ userId, onLogout }) {
           {/* Dashboard View */}
           {activeMenu === 'dashboard' && (
             <>
-              {/* Stats Overview */}
+              {/* Quick Overview Row */}
+              <div className="overview-row">
+                <div className="overview-total">
+                  <div className="overview-total-inner">
+                    <div className="overview-total-info">
+                      <span className="overview-total-label">งานทั้งหมด</span>
+                      <span className="overview-total-number">{stats.total || 0}</span>
+                    </div>
+                    <div className="overview-ring-wrapper">
+                      <svg width="70" height="70" viewBox="0 0 70 70">
+                        <circle cx="35" cy="35" r="28" fill="none" stroke="#e5e7eb" strokeWidth="6" />
+                        <circle cx="35" cy="35" r="28"
+                          fill="none"
+                          stroke={(() => {
+                            const total = stats.total || 0;
+                            const rate = total > 0 ? (stats.completed || 0) / total * 100 : 0;
+                            return rate >= 70 ? '#10b981' : rate >= 40 ? '#f59e0b' : '#ef4444';
+                          })()}
+                          strokeWidth="6"
+                          strokeDasharray={2 * Math.PI * 28}
+                          strokeDashoffset={(() => {
+                            const total = stats.total || 0;
+                            const rate = total > 0 ? (stats.completed || 0) / total * 100 : 0;
+                            return 2 * Math.PI * 28 - (rate / 100) * 2 * Math.PI * 28;
+                          })()}
+                          strokeLinecap="round"
+                          transform="rotate(-90 35 35)"
+                          style={{ transition: 'stroke-dashoffset 1s ease' }}
+                        />
+                        <text x="35" y="33" textAnchor="middle" className="ring-percent">
+                          {(() => {
+                            const total = stats.total || 0;
+                            return total > 0 ? ((stats.completed || 0) / total * 100).toFixed(0) : 0;
+                          })()}%
+                        </text>
+                        <text x="35" y="45" textAnchor="middle" className="ring-label">สำเร็จ</text>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Stats Overview - 4 Cards */}
               <div className="stats-grid">
-                <div className="stat-card">
+                <div className="stat-card stat-pending">
                   <div className="stat-content">
                     <div className="stat-info">
-                      <div className="stat-label">งานใหม่</div>
+                      <div className="stat-label">รอมอบหมาย</div>
                       <div className="stat-number">{stats.pending}</div>
                     </div>
                     <div className="stat-icon-wrapper bg-warn-light">
                       <Clock size={24} className="text-warn" />
                     </div>
                   </div>
+                  <div className="stat-bar" style={{ background: '#f59e0b' }}></div>
                 </div>
 
-                <div className="stat-card">
+                <div className="stat-card stat-progress">
                   <div className="stat-content">
                     <div className="stat-info">
-                      <div className="stat-label">กำลังทำ</div>
+                      <div className="stat-label">กำลังดำเนินการ</div>
                       <div className="stat-number">{stats.in_progress}</div>
                     </div>
                     <div className="stat-icon-wrapper bg-info-light">
                       <Wrench size={24} className="text-info" />
                     </div>
                   </div>
+                  <div className="stat-bar" style={{ background: '#3b82f6' }}></div>
                 </div>
 
-
+                <div className="stat-card stat-done">
+                  <div className="stat-content">
+                    <div className="stat-info">
+                      <div className="stat-label">เสร็จสิ้น</div>
+                      <div className="stat-number">{stats.completed || 0}</div>
+                    </div>
+                    <div className="stat-icon-wrapper bg-success-light">
+                      <CheckCircle size={24} className="text-success" />
+                    </div>
+                  </div>
+                  <div className="stat-bar" style={{ background: '#10b981' }}></div>
+                </div>
               </div>
 
               {/* Team Workload */}
               <div className="workload-section">
                 <h3 className="section-title">
-                  <BarChart2 size={20} className="mr-2" />
+                  <Users size={20} className="mr-2" />
                   ภาระงานของทีมช่างปัจจุบัน
                 </h3>
-                <div className="workload-list">
-                  {teamWorkload.map((tech, idx) => (
-                    <div key={idx} className="workload-item">
-                      <p className="tech-name">{tech.name}</p>
-                      <div className="progress-bar-container">
-                        <div
-                          className="progress-bar"
-                          style={{
-                            width: `${Math.min((tech.tasks / 10) * 100, 100)}%`,
-                            backgroundColor: tech.tasks > 5 ? 'var(--error)' : 'var(--primary)'
-                          }}
-                        ></div>
+                {teamWorkload.length === 0 ? (
+                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>ยังไม่มีข้อมูลทีมช่าง</p>
+                ) : (
+                  <div className="workload-list">
+                    {teamWorkload.map((tech, idx) => (
+                      <div key={idx} className="workload-item">
+                        <div className="workload-tech-info">
+                          <div className="workload-avatar" style={{
+                            background: tech.tasks > 5 ? 'linear-gradient(135deg, #fecaca, #fca5a5)' :
+                              tech.tasks > 0 ? 'linear-gradient(135deg, #dbeafe, #bfdbfe)' :
+                                'linear-gradient(135deg, #dcfce7, #bbf7d0)'
+                          }}>
+                            <span style={{
+                              color: tech.tasks > 5 ? '#dc2626' : tech.tasks > 0 ? '#2563eb' : '#16a34a'
+                            }}>{tech.name?.charAt(0) || '?'}</span>
+                          </div>
+                          <p className="tech-name">{tech.name}</p>
+                        </div>
+                        <div className="progress-bar-container">
+                          <div
+                            className="progress-bar"
+                            style={{
+                              width: `${Math.min((tech.tasks / 10) * 100, 100)}%`,
+                              background: tech.tasks > 5
+                                ? 'linear-gradient(90deg, #f87171, #ef4444)'
+                                : tech.tasks > 0
+                                  ? 'linear-gradient(90deg, #60a5fa, #3b82f6)'
+                                  : 'linear-gradient(90deg, #34d399, #10b981)'
+                            }}
+                          ></div>
+                        </div>
+                        <p className="task-count">{tech.tasks} งาน</p>
                       </div>
-                      <p className="task-count">{tech.tasks} งาน</p>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              {/* Task Tabs */}
+              {/* Task Tabs - 3 tabs */}
               <div className="filter-tabs">
                 <button
                   onClick={() => {
@@ -389,7 +485,6 @@ function SupervisorDashboard({ userId, onLogout }) {
                   <span className="tab-text">กำลังดำเนินการ</span>
                   <span className="tab-badge">{stats.in_progress}</span>
                 </button>
-
 
               </div>
 
@@ -433,6 +528,7 @@ function SupervisorDashboard({ userId, onLogout }) {
 
           {/* ✅ Enabled Profile Page */}
           {activeMenu === 'profile' && <Profile userId={userId} />}
+          {activeMenu === 'guide' && <UserGuide userRole="supervisor" />}
         </div>
       </main>
 

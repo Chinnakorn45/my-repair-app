@@ -1,94 +1,269 @@
-/* ========== REMOVED INTERNAL TOP BAR STYLES ========== */
+/* ==============================================
+   Building Manager - Enhanced Layout
+   ============================================== */
 
 .building-manager-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    /* Remove background to blend with AdminDashboard */
+    gap: 20px;
     background: transparent;
 }
 
-/* Match AdminDashboard .user-item style */
-.building-card {
+/* ---- Summary Row ---- */
+.bm-summary-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.bm-summary-card {
     background: white;
-    padding: 24px;
+    border-radius: 14px;
     border: 1px solid #e5e7eb;
-    /* var(--border-color) */
-    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     transition: all 0.3s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-    cursor: pointer;
+}
+
+.bm-summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.bm-summary-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.bm-summary-info {
     display: flex;
     flex-direction: column;
-    gap: 12px;
 }
 
-.building-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
-    border-color: #3b82f6;
-    /* var(--primary-color) */
-}
-
-.building-card.active {
-    background-color: #eff6ff;
-    border: 2px solid #3b82f6;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-}
-
-.building-card-header {
-    margin-bottom: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-
-.building-name {
-    margin: 0;
-    font-size: 1.1em;
-    font-weight: 700;
+.bm-summary-num {
+    font-size: 28px;
+    font-weight: 800;
     color: #1f2937;
-    /* var(--text-black) */
-    flex: 1;
+    line-height: 1.1;
 }
 
-.building-id {
-    font-size: 0.75em;
+.bm-summary-label {
+    font-size: 13px;
     color: #64748b;
-    /* var(--text-gray) */
-    background-color: #f1f5f9;
-    padding: 4px 8px;
-    border-radius: 6px;
-    margin-left: 8px;
     font-weight: 600;
 }
 
-.building-coords {
+/* ---- Two-Column Main ---- */
+.bm-main-row {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 20px;
+}
+
+.bm-map-section,
+.bm-form-section {
+    background: white;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+}
+
+.bm-map-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.bm-form-section {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.bm-map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.bm-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 18px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bm-map-header .bm-section-title {
     margin: 0;
-    font-size: 0.9em;
+}
+
+/* ---- Map ---- */
+.map-wrapper {
+    flex: 1;
+    min-height: 380px;
+    background: #f1f5f9;
+}
+
+.map-wrapper .leaflet-container {
+    border-radius: 0;
+}
+
+/* ---- Map Controls ---- */
+.map-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.layer-button {
+    padding: 7px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
     color: #64748b;
-    font-family: monospace;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.layer-button:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.layer-button.active {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    border-color: #3b82f6;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* ---- Form ---- */
+.editing-notice {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #fcd34d;
     display: flex;
     align-items: center;
 }
 
-.building-card-actions {
-    margin-top: auto;
-    padding-top: 16px;
-    border-top: 1px solid #f1f5f9;
-    display: flex;
-    gap: 12px;
+.form-group {
+    margin-bottom: 18px;
 }
 
-/* Updated buttons to match .action-button */
-.card-edit-button {
+.label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.input-field {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.3s;
+    box-sizing: border-box;
+    color: #1f2937;
+    background: #f8fafc;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.coords-display {
+    padding: 12px 16px;
+    background: #f0fdf4;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    display: flex;
+    align-items: center;
+}
+
+.bm-hint {
+    background: #eff6ff;
+    color: #3b82f6;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px dashed #93c5fd;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.save-button {
     flex: 1;
-    padding: 10px;
+    padding: 12px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.save-button:hover {
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+    transform: translateY(-1px);
+}
+
+.cancel-button {
+    flex: 1;
+    padding: 12px;
     background: white;
     color: #64748b;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 0.9em;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
@@ -96,6 +271,132 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
+}
+
+.cancel-button:hover {
+    background: #f8fafc;
+    color: #1f2937;
+    border-color: #cbd5e1;
+}
+
+/* ---- Buildings List ---- */
+.buildings-list {
+    background: white;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.list-title {
+    margin: 0 0 20px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+}
+
+.buildings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+/* ---- Building Card ---- */
+.building-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    transition: all 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.building-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    border-color: #3b82f6;
+}
+
+.building-card.active {
+    border: 2px solid #3b82f6;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
+    background: #fafbff;
+}
+
+.bm-card-accent {
+    height: 4px;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.building-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 18px 20px 0;
+}
+
+.building-name {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f2937;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.building-id {
+    font-size: 12px;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-left: 8px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.building-coords {
+    margin: 0;
+    padding: 8px 20px 0;
+    font-size: 12px;
+    color: #94a3b8;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    align-items: center;
+}
+
+.building-card-actions {
+    padding: 14px 20px 18px;
+    margin-top: auto;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.card-edit-button,
+.card-delete-button {
+    flex: 1;
+    padding: 8px;
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #64748b;
 }
 
 .card-edit-button:hover {
@@ -104,100 +405,13 @@
     color: #3b82f6;
 }
 
-.card-delete-button {
-    flex: 1;
-    padding: 10px;
-    background: white;
-    color: #64748b;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 0.9em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
 .card-delete-button:hover {
     background: #fef2f2;
     border-color: #ef4444;
     color: #ef4444;
 }
 
-/* Map Wrapper & Form matching Admin Cards */
-.map-wrapper,
-.form-container,
-.buildings-list {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
-    margin-bottom: 24px;
-    padding: 20px;
-}
-
-.map-wrapper {
-    padding: 0;
-    /* Map needs no padding */
-    overflow: hidden;
-    height: 400px;
-}
-
-.buildings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-/* Map Controls matching Tabs */
-.map-controls {
-    padding: 0;
-    margin-bottom: 16px;
-    display: flex;
-    gap: 12px;
-    background-color: transparent;
-    border-radius: 0;
-}
-
-.layer-button {
-    padding: 10px 16px;
-    border: 2px solid #e5e7eb;
-    /* var(--border-color) */
-    border-radius: 12px;
-    background-color: white;
-    color: #64748b;
-    /* var(--text-gray) */
-    cursor: pointer;
-    font-size: 0.95em;
-    font-weight: 600;
-    transition: all 0.2s;
-    white-space: nowrap;
-    box-shadow: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.layer-button:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
-    color: #2563eb;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-}
-
-.layer-button.active {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    color: white;
-    border-color: #3b82f6;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-/* ... popup styles ... */
-
+/* ---- Map Popups ---- */
 .popup-container {
     font-family: 'Sarabun', sans-serif;
     min-width: 200px;
@@ -240,160 +454,97 @@
 .edit-button {
     flex: 1;
     padding: 6px 12px;
-    background-color: white;
+    background: white;
     color: #3b82f6;
     border: 1px solid #3b82f6;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
 }
 
 .edit-button:hover {
-    background-color: #eff6ff;
+    background: #eff6ff;
 }
 
 .delete-button {
     flex: 1;
     padding: 6px 12px;
-    background-color: white;
+    background: white;
     color: #ef4444;
     border: 1px solid #ef4444;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
 }
 
 .delete-button:hover {
-    background-color: #fef2f2;
-}
-
-/* Form Styles */
-.editing-notice {
-    background-color: #fef3c7;
-    color: #92400e;
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 0.95em;
-    font-weight: 500;
-    border: 1px solid #fcd34d;
-    display: flex;
-    align-items: center;
-}
-
-.form-group {
-    margin-bottom: 16px;
-}
-
-.label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 0.95em;
-    font-weight: 600;
-    color: #374151;
-    /* var(--text-black) */
-}
-
-.input-field {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    font-size: 0.95em;
-    font-family: inherit;
-    transition: all 0.3s;
-    box-sizing: border-box;
-    color: #1f2937;
-    background: white;
-}
-
-.input-field:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.coords-display {
-    padding: 12px 16px;
-    background-color: #f8fafc;
-    border-radius: 8px;
-    font-size: 0.9em;
-    font-family: monospace;
-    color: #475569;
-    border: 1px solid #e2e8f0;
-    display: flex;
-    align-items: center;
-}
-
-.button-group {
-    display: flex;
-    gap: 12px;
-}
-
-.save-button {
-    flex: 1;
-    padding: 12px;
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.save-button:hover {
-    background-color: #2563eb;
-    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
-    transform: translateY(-1px);
-}
-
-.cancel-button {
-    flex: 1;
-    padding: 12px;
-    background-color: white;
-    color: #64748b;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.cancel-button:hover {
-    background-color: #f8fafc;
-    color: #1f2937;
-    border-color: #cbd5e1;
-}
-
-.list-title {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.1em;
-    font-weight: 700;
-    color: #1f2937;
-    display: flex;
-    align-items: center;
+    background: #fef2f2;
 }
 
 .empty-message {
     text-align: center;
     color: #94a3b8;
-    font-size: 0.95em;
+    font-size: 15px;
     padding: 40px 20px;
+}
+
+.icon-gap {
+    margin-right: 6px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1024px) {
+    .bm-main-row {
+        grid-template-columns: 1fr;
+    }
+
+    .map-wrapper {
+        min-height: 320px;
+    }
+}
+
+@media (max-width: 768px) {
+    .bm-summary-row {
+        grid-template-columns: 1fr;
+    }
+
+    .buildings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bm-map-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .bm-summary-card {
+        padding: 14px;
+    }
+
+    .bm-summary-num {
+        font-size: 22px;
+    }
+
+    .building-card-header {
+        padding: 14px 16px 0;
+    }
+
+    .building-card-actions {
+        padding: 12px 16px 14px;
+    }
 }

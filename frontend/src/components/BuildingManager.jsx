@@ -260,160 +260,175 @@ export default function BuildingManager() {
   return (
     <div className="building-manager-container">
 
-
-      <div className="map-controls">
-        <button
-          key="map-layer-btn"
-          className={`layer-button ${mapLayer === 'map' ? 'active' : ''}`}
-          onClick={() => setMapLayer('map')}
-          title="แผนที่ปกติ"
-        >
-          <MapIcon size={16} className="icon-gap" /> แผนที่
-        </button>
-        <button
-          key="satellite-layer-btn"
-          className={`layer-button ${mapLayer === 'satellite' ? 'active' : ''}`}
-          onClick={() => setMapLayer('satellite')}
-          title="ดาวเทียม"
-        >
-          <Satellite size={16} className="icon-gap" /> ดาวเทียม
-        </button>
-      </div>
-
-      <div className="map-wrapper">
-        <MapContainer
-          center={UNIVERSITY_CENTER}
-          zoom={16}
-          style={{ height: '100%', width: '100%' }}
-          ref={mapRef}
-        >
-          <TileLayer
-            url={mapLayer === 'map'
-              ? "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"}
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-          <LocationMarker />
-
-          {buildings.map((building) => (
-            <Marker
-              key={building.building_id}
-              position={[building.lat, building.lng]}
-              icon={savedBuildingIcon}
-              eventHandlers={{
-                click: () => {
-                  if (!editingBuilding) handleEditBuilding(building);
-                }
-              }}
-            >
-              <Popup>
-                <div className="popup-container">
-                  <div className="popup-title"><BuildingIcon size={16} /> {building.name}</div>
-                  <div className="popup-details-row">
-                    <strong>ID:</strong> {building.building_id}
-                  </div>
-                  <div className="popup-actions">
-                    <button
-                      className="edit-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleEditBuilding(building);
-                      }}
-                    >
-                      <Edit size={14} /> แก้ไข
-                    </button>
-                    <button
-                      className="delete-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteBuilding(building.building_id);
-                      }}
-                    >
-                      <Trash2 size={14} /> ลบ
-                    </button>
-                  </div>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
-
-      <div className="form-container">
-        {editingBuilding && (
-          <div className="editing-notice">
-            <AlertCircle size={16} className="icon-gap" /> กำลังแก้ไข: <strong>{editingBuilding.name}</strong> (ID: {editingBuilding.building_id})
+      {/* Summary Stats */}
+      <div className="bm-summary-row">
+        <div className="bm-summary-card">
+          <div className="bm-summary-icon" style={{ background: '#dbeafe', color: '#3b82f6' }}><BuildingIcon size={22} /></div>
+          <div className="bm-summary-info">
+            <span className="bm-summary-num">{buildings.length}</span>
+            <span className="bm-summary-label">ตึกทั้งหมด</span>
           </div>
-        )}
-
-        <div className="form-group">
-          <label className="label">ชื่อตึก / สถานที่</label>
-          <input
-            type="text"
-            className="input-field"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="ระบุชื่อตึก"
-          />
         </div>
+        <div className="bm-summary-card">
+          <div className="bm-summary-icon" style={{ background: '#dcfce7', color: '#10b981' }}><MapPin size={22} /></div>
+          <div className="bm-summary-info">
+            <span className="bm-summary-num">{buildings.filter(b => b.lat && b.lng).length}</span>
+            <span className="bm-summary-label">มีพิกัด GPS</span>
+          </div>
+        </div>
+        <div className="bm-summary-card">
+          <div className="bm-summary-icon" style={{ background: editingBuilding ? '#fef3c7' : '#f1f5f9', color: editingBuilding ? '#f59e0b' : '#94a3b8' }}><Edit size={22} /></div>
+          <div className="bm-summary-info">
+            <span className="bm-summary-num">{editingBuilding ? 1 : 0}</span>
+            <span className="bm-summary-label">กำลังแก้ไข</span>
+          </div>
+        </div>
+      </div>
 
-        {position && (
-          <div className="form-group">
-            <label className="label">พิกัด</label>
-            <div className="coords-display">
-              <MapPin size={16} className="icon-gap" /> Lat: {position.lat.toFixed(6)}, Lng: {position.lng.toFixed(6)}
+      {/* Two-Column: Map + Form */}
+      <div className="bm-main-row">
+        {/* Left: Map */}
+        <div className="bm-map-section">
+          <div className="bm-map-header">
+            <h3 className="bm-section-title"><MapIcon size={18} /> แผนที่</h3>
+            <div className="map-controls">
+              <button
+                className={`layer-button ${mapLayer === 'map' ? 'active' : ''}`}
+                onClick={() => setMapLayer('map')}
+              >
+                <MapIcon size={15} /> แผนที่
+              </button>
+              <button
+                className={`layer-button ${mapLayer === 'satellite' ? 'active' : ''}`}
+                onClick={() => setMapLayer('satellite')}
+              >
+                <Satellite size={15} /> ดาวเทียม
+              </button>
             </div>
           </div>
-        )}
+          <div className="map-wrapper">
+            <MapContainer
+              center={UNIVERSITY_CENTER}
+              zoom={16}
+              style={{ height: '100%', width: '100%' }}
+              ref={mapRef}
+            >
+              <TileLayer
+                url={mapLayer === 'map'
+                  ? "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"}
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              />
+              <LocationMarker />
 
-        <div className="button-group">
-          <button className="save-button" onClick={handleSave}>
-            <Save size={16} className="icon-gap" /> {editingBuilding ? 'อัปเดตข้อมูล' : 'บันทึกตึก'}
-          </button>
+              {buildings.map((building) => (
+                <Marker
+                  key={building.building_id}
+                  position={[building.lat, building.lng]}
+                  icon={savedBuildingIcon}
+                  eventHandlers={{
+                    click: () => {
+                      if (!editingBuilding) handleEditBuilding(building);
+                    }
+                  }}
+                >
+                  <Popup>
+                    <div className="popup-container">
+                      <div className="popup-title"><BuildingIcon size={16} /> {building.name}</div>
+                      <div className="popup-details-row">
+                        <strong>ID:</strong> {building.building_id}
+                      </div>
+                      <div className="popup-actions">
+                        <button className="edit-button" onClick={(e) => { e.stopPropagation(); handleEditBuilding(building); }}>
+                          <Edit size={14} /> แก้ไข
+                        </button>
+                        <button className="delete-button" onClick={(e) => { e.stopPropagation(); handleDeleteBuilding(building.building_id); }}>
+                          <Trash2 size={14} /> ลบ
+                        </button>
+                      </div>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
+          </div>
+        </div>
+
+        {/* Right: Form */}
+        <div className="bm-form-section">
+          <h3 className="bm-section-title"><Save size={18} /> {editingBuilding ? 'แก้ไขข้อมูลตึก' : 'เพิ่มตึกใหม่'}</h3>
+
           {editingBuilding && (
-            <button className="cancel-button" onClick={handleCancelEdit}>
-              <X size={16} className="icon-gap" /> ยกเลิก
-            </button>
+            <div className="editing-notice">
+              <AlertCircle size={16} className="icon-gap" /> กำลังแก้ไข: <strong>{editingBuilding.name}</strong>
+            </div>
           )}
+
+          <div className="form-group">
+            <label className="label">ชื่อตึก / สถานที่</label>
+            <input
+              type="text"
+              className="input-field"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="ระบุชื่อตึก"
+            />
+          </div>
+
+          {position && (
+            <div className="form-group">
+              <label className="label">พิกัด</label>
+              <div className="coords-display">
+                <MapPin size={16} className="icon-gap" /> Lat: {position.lat.toFixed(6)}, Lng: {position.lng.toFixed(6)}
+              </div>
+            </div>
+          )}
+
+          {!position && !editingBuilding && (
+            <div className="bm-hint">
+              <MapPin size={16} /> คลิกบนแผนที่เพื่อเลือกตำแหน่งตึก
+            </div>
+          )}
+
+          <div className="button-group">
+            <button className="save-button" onClick={handleSave}>
+              <Save size={16} className="icon-gap" /> {editingBuilding ? 'อัปเดตข้อมูล' : 'บันทึกตึก'}
+            </button>
+            {editingBuilding && (
+              <button className="cancel-button" onClick={handleCancelEdit}>
+                <X size={16} className="icon-gap" /> ยกเลิก
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
+      {/* Buildings List */}
       <div className="buildings-list">
         <h3 className="list-title"><ClipboardList size={20} className="icon-gap" /> รายการตึกทั้งหมด ({buildings.length})</h3>
         {buildings.length === 0 ? (
           <p className="empty-message">ยังไม่มีข้อมูลตึก</p>
         ) : (
           <div className="buildings-grid">
-            {buildings.map((building) => (
+            {buildings.map((building, idx) => (
               <div
                 key={building.building_id}
                 className={`building-card ${editingBuilding?.building_id === building.building_id ? 'active' : ''}`}
                 onClick={() => handleEditBuilding(building)}
               >
+                <div className="bm-card-accent" style={{ background: `linear-gradient(90deg, ${['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4'][idx % 6]}, ${['#60a5fa', '#34d399', '#a78bfa', '#fbbf24', '#f87171', '#22d3ee'][idx % 6]})` }}></div>
                 <div className="building-card-header">
                   <h4 className="building-name"><BuildingIcon size={18} className="icon-gap" /> {building.name}</h4>
-                  <span className="building-id">ID: {building.building_id}</span>
+                  <span className="building-id">#{building.building_id}</span>
                 </div>
                 <p className="building-coords">
                   <MapPin size={14} className="icon-gap" /> {building.lat.toFixed(5)}, {building.lng.toFixed(5)}
                 </p>
                 <div className="building-card-actions">
-                  <button
-                    className="card-edit-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEditBuilding(building);
-                    }}
-                  >
+                  <button className="card-edit-button" onClick={(e) => { e.stopPropagation(); handleEditBuilding(building); }}>
                     <Edit size={14} /> แก้ไข
                   </button>
-                  <button
-                    className="card-delete-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteBuilding(building.building_id);
-                    }}
-                  >
+                  <button className="card-delete-button" onClick={(e) => { e.stopPropagation(); handleDeleteBuilding(building.building_id); }}>
                     <Trash2 size={14} /> ลบ
                   </button>
                 </div>
