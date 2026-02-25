@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { MapPin, Layers, Globe, Clock, CheckCircle } from 'lucide-react';
+import { MapPin, Layers, Globe, Clock, CheckCircle, FileText, AlertCircle } from 'lucide-react';
 import './Dashboardhome.css';
 import '../MapPicker.css'; // Reuse MapPicker styles for consistency
 
@@ -81,6 +81,7 @@ const translateStatus = (status) => {
 
 const DashboardHome = ({ userId: propUserId }) => {
   const [allRepairs, setAllRepairs] = useState([]);
+  const [myRepairs, setMyRepairs] = useState([]);
   const [stats, setStats] = useState({ pending: 0, in_progress: 0, completed: 0 });
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -210,6 +211,7 @@ const DashboardHome = ({ userId: propUserId }) => {
         });
       }
 
+      setMyRepairs(Array.isArray(userRepairs) ? userRepairs : []);
       setAllRepairs(Array.from(repairMap.values()));
 
     } catch (error) {
@@ -248,15 +250,13 @@ const DashboardHome = ({ userId: propUserId }) => {
 
       {/* Stats */}
       <div className="stats-grid">
-        {userRole !== 'user' && (
-          <div className="stat-card">
-            <div className="stat-icon-wrapper orange"><Clock size={24} color="#FFA500" /></div>
-            <div className="stat-content">
-              <div className="stat-value">{stats.pending}</div>
-              <div className="stat-label">รอดำเนินการ</div>
-            </div>
+        <div className="stat-card">
+          <div className="stat-icon-wrapper orange"><Clock size={24} color="#FFA500" /></div>
+          <div className="stat-content">
+            <div className="stat-value">{stats.pending}</div>
+            <div className="stat-label">รอดำเนินการ</div>
           </div>
-        )}
+        </div>
         <div className="stat-card">
           <div className="stat-icon-wrapper blue"><Clock size={24} color="#4169E1" /></div>
           <div className="stat-content">
@@ -320,8 +320,8 @@ const DashboardHome = ({ userId: propUserId }) => {
               </Popup>
             </Marker>
 
-            {/* Repairs (Filter out completed) */}
-            {allRepairs.map((repair) => (
+            {/* Repairs (Filter out completed) — user role shows only own repairs */}
+            {(userRole === 'user' ? myRepairs : allRepairs).map((repair) => (
               (repair.lat && repair.lng && repair.status !== 'completed') && (
                 <Marker
                   key={repair.request_id}
@@ -350,7 +350,7 @@ const DashboardHome = ({ userId: propUserId }) => {
               )
             ))}
 
-            <MapBounds markers={allRepairs.filter(r => r.lat && r.lng)} />
+            <MapBounds markers={(userRole === 'user' ? myRepairs : allRepairs).filter(r => r.lat && r.lng)} />
           </MapContainer>
         </div>
 
@@ -370,6 +370,41 @@ const DashboardHome = ({ userId: propUserId }) => {
           </div>
         </div>
       </div>
+
+      {/* Pending Requests List — show only user's own repairs */}
+      {(() => {
+        const pendingList = (userRole === 'user' ? myRepairs : allRepairs)
+          .filter(r => r.status === 'pending' || r.status === 'in_progress');
+        return pendingList.length > 0 && (
+          <div className="pending-requests-section">
+            <h3 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 16px 0', textAlign: 'left' }}>
+              <AlertCircle size={22} /> งานที่ยังไม่เสร็จสิ้น
+            </h3>
+            <div className="pending-requests-list">
+              {pendingList
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                .map(repair => (
+                  <div key={repair.request_id} className={`pending-request-card status-${repair.status}`}>
+                    <div className="pending-card-header">
+                      <span className={`pending-status-badge ${repair.status}`}>
+                        {repair.status === 'pending' ? <Clock size={14} /> : <FileText size={14} />}
+                        {translateStatus(repair.status)}
+                      </span>
+                      <span className="pending-request-id">#{repair.request_id}</span>
+                    </div>
+                    <p className="pending-card-desc">{repair.description}</p>
+                    <div className="pending-card-meta">
+                      {repair.building_name && (
+                        <span className="pending-meta-item"><MapPin size={14} /> {repair.building_name}</span>
+                      )}
+                      <span className="pending-meta-item"><Clock size={14} /> {new Date(repair.created_at).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };

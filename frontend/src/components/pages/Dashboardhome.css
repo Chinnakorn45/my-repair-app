@@ -196,3 +196,132 @@
   margin: 15px;
   font-family: inherit;
 }
+
+/* ===== Pending Requests Section ===== */
+.pending-requests-section {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+  border: 1px solid #e5e7eb;
+}
+
+.pending-requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pending-request-card {
+  background: #fafbfc;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #94a3b8;
+  border-radius: 10px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.pending-request-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.pending-request-card.status-pending {
+  border-left-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.pending-request-card.status-in_progress {
+  border-left-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.pending-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.pending-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pending-status-badge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.pending-status-badge.in_progress {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.pending-request-id {
+  font-size: 13px;
+  font-weight: 700;
+  color: #94a3b8;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.pending-card-desc {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.pending-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.pending-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.stat-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px auto;
+}
+
+.stat-icon-wrapper.orange {
+  background: #fff7ed;
+}
+
+.stat-icon-wrapper.blue {
+  background: #eff6ff;
+}
+
+.stat-icon-wrapper.green {
+  background: #f0fdf4;
+}
+
+@media (max-width: 480px) {
+  .pending-card-meta {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
