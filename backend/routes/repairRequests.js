@@ -21,9 +21,19 @@ module.exports = (upload, io) => {
          VALUES ($1, $2, $3, $4, $5, $6, 'pending') RETURNING *`,
         [user_id, building_id || null, description, image_path, lat, lng]
       );
+      // ดึงชื่อสถานที่จาก building_id
+      let locationName = 'ไม่ระบุสถานที่';
+      if (building_id) {
+        const bldg = await pool.query('SELECT name FROM buildings WHERE id = $1', [building_id]);
+        if (bldg.rows.length > 0) locationName = bldg.rows[0].name;
+      }
 
-      // แจ้งเตือน Real-time ไปยังช่าง/Admin
-      io.emit('new_request', result.rows[0]);
+      // แจ้งเตือน Real-time เฉพาะหัวหน้างาน (supervisor)
+      io.to('role:supervisor').emit('new_request', {
+        request_id: result.rows[0].request_id,
+        description: description,
+        location: locationName
+      });
 
       res.json({ success: true, data: result.rows[0] });
     } catch (err) {

@@ -41,7 +41,7 @@ function App() {
       Swal.fire({
         icon: 'info',
         title: 'มีแจ้งซ่อมใหม่',
-        text: 'ID: ' + data.request_id,
+        text: `📍 ${data.location || 'ไม่ระบุสถานที่'}`,
         timer: 5000,
         toast: true,
         position: 'top-end',

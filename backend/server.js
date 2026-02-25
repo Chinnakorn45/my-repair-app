@@ -504,6 +504,21 @@ app.get('/api/technician/stats', verifyToken, async (req, res) => {
 // ================= Socket.io =================
 io.on('connection', (socket) => {
   console.log('Socket connected:', socket.id);
+
+  // Decode token and join role-based room
+  try {
+    const token = socket.handshake.auth?.token;
+    if (token) {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      socket.userRole = decoded.role;
+      socket.userId = decoded.user_id;
+      socket.join(`role:${decoded.role}`);
+      console.log(`Socket ${socket.id} joined room role:${decoded.role}`);
+    }
+  } catch (err) {
+    console.error('Socket auth error:', err.message);
+  }
+
   socket.on('disconnect', () => console.log('Socket disconnected:', socket.id));
 });
 
