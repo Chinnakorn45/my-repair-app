@@ -95,7 +95,9 @@ export default function BuildingManager() {
         const data = await response.json();
         const normalizedData = data.map(building => ({
           ...building,
-          building_id: building.id || building.building_id || building._id
+          building_id: building.id || building.building_id || building._id,
+          lat: parseFloat(building.lat),
+          lng: parseFloat(building.lng)
         }));
         setBuildings(normalizedData);
       } else {

@@ -1779,6 +1779,35 @@ button:focus-visible,
 }
 
 /* ---- Responsive ---- */
+@media (max-width: 1023px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .top-bar {
+    padding: 14px 16px;
+  }
+
+  .page-title {
+    font-size: 18px;
+  }
+
+  .container {
+    padding: 16px;
+  }
+
+  .content-wrapper {
+    padding: 16px;
+  }
+}
+
 @media (max-width: 1024px) {
   .adh-stats-grid {
     grid-template-columns: repeat(2, 1fr);

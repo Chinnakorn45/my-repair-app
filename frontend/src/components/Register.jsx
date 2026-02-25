@@ -21,12 +21,21 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
 
   const departmentOptions = [
     'คณะครุศาสตร์',
+    'วิทยาลัยนานาชาติการท่องเที่ยว',
+    'โรงเรียนสาธิตแห่งมหาวิทยาลัยราชภัฏสุราษฎร์ธานี',
     'คณะวิทยาศาสตร์และเทคโนโลยี',
     'คณะวิทยาการจัดการ',
     'คณะมนุษยศาสตร์และสังคมศาสตร์',
     'คณะนิติศาสตร์',
     'พยาบาลศาสตร์',
-    'สำนักงานอธิการบดี'
+    'สำนักงานอธิการบดี',
+    'สภามหาวิทยาลัย',
+    'สำนักงานอธิการบดี',
+    'สถาบันวิจัยและพัฒนา',
+    'สำนักวิทยบริการและเทคโนโลยีสารสนเทศ',
+    'สำนักศิลปะและวัฒนธรรม',
+    'สำนักส่งเสริมวิชาการและงานทะเบียน',
+    'สำนักประกันคุณภาพการศึกษา'
   ];
 
   const handleChange = (e) => {
@@ -151,7 +160,7 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
                   name="student_id_staff_id"
                   value={formData.student_id_staff_id}
                   onChange={handleChange}
-                  placeholder="กรุณากรอกรหัส 10 หลัก"
+                  placeholder="กรุณากรอกรหัสนักศึกษา/บุคลาก "
                   className="register-input"
                 />
               </div>
