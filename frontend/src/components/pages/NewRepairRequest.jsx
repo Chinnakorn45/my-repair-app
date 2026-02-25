@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 import { FileText, Camera, MapPin, Search } from 'lucide-react';
 import MapPicker from "../MapPicker";
 import './NewRepairRequest.css';
+import API_URL from '../../config/api';
 
 function NewRepairRequest({ userId, onCancel }) {
   const [desc, setDesc] = useState('');
@@ -25,7 +26,7 @@ function NewRepairRequest({ userId, onCancel }) {
       setBuildingLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:5000/api/buildings/nearest?lat=${pos.lat}&lng=${pos.lng}`
+          `${API_URL}/api/buildings/nearest?lat=${pos.lat}&lng=${pos.lng}`
         );
         const data = await response.json();
 
@@ -74,7 +75,7 @@ function NewRepairRequest({ userId, onCancel }) {
     formData.append('image', file);
 
     try {
-      const response = await fetch('http://localhost:5000/api/repair-requests', {
+      const response = await fetch(API_URL + '/api/repair-requests', {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -117,7 +118,7 @@ function NewRepairRequest({ userId, onCancel }) {
   useEffect(() => {
     const fetchActiveRequests = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/repair-requests/public/in-progress');
+        const response = await fetch(API_URL + '/api/repair-requests/public/in-progress');
         if (response.ok) {
           const data = await response.json();
           const validRequests = data.filter(req => req.lat && req.lng); // Filter out invalid coords

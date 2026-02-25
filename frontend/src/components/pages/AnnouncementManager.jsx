@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { Megaphone, Trash2, Plus, Calendar } from 'lucide-react';
 import './Notifications.css'; // Reuse existing styles or create new
+import API_URL from '../../config/api';
 
 const AnnouncementManager = () => {
     const [announcements, setAnnouncements] = useState([]);
@@ -22,7 +23,7 @@ const AnnouncementManager = () => {
 
     const fetchAnnouncements = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/announcements');
+            const res = await fetch(API_URL + '/api/announcements');
             const data = await res.json();
             setAnnouncements(Array.isArray(data) ? data : []);
         } catch (err) {
@@ -35,13 +36,13 @@ const AnnouncementManager = () => {
 
     const fetchPopupSettings = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/popup');
+            const res = await fetch(API_URL + '/api/popup');
             const data = await res.json();
             if (data) {
                 setPopupActive(data.active);
                 setPopupText(data.text);
                 if (data.image_url) {
-                    setPopupPreview(`http://localhost:5000${data.image_url}`);
+                    setPopupPreview(`${API_URL}${data.image_url}`);
                 }
             }
         } catch (err) {
@@ -64,12 +65,12 @@ const AnnouncementManager = () => {
         // Wait, backend logic: let image_url = req.body.current_image_url;
         // So I need to send current_image_url.
         if (popupPreview && !popupImage) {
-            const currentPath = popupPreview.replace('http://localhost:5000', '');
+            const currentPath = popupPreview.replace(API_URL, '');
             formData.append('current_image_url', currentPath);
         }
 
         try {
-            const res = await fetch('http://localhost:5000/api/popup', {
+            const res = await fetch(API_URL + '/api/popup', {
                 method: 'POST',
                 body: formData
             });
@@ -90,7 +91,7 @@ const AnnouncementManager = () => {
 
         try {
             const user_id = localStorage.getItem('user_id');
-            const res = await fetch('http://localhost:5000/api/announcements', {
+            const res = await fetch(API_URL + '/api/announcements', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title, content, user_id })
@@ -119,7 +120,7 @@ const AnnouncementManager = () => {
 
         if (result.isConfirmed) {
             try {
-                await fetch(`http://localhost:5000/api/announcements/${id}`, { method: 'DELETE' });
+                await fetch(`${API_URL}/api/announcements/${id}`, { method: 'DELETE' });
                 setAnnouncements(prev => prev.filter(a => a.id !== id));
                 Swal.fire('ลบสำเร็จ', '', 'success');
             } catch (err) {

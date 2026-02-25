@@ -13,6 +13,7 @@ import Notifications from './pages/AnnouncementFeed';
 import Profile from './pages/Profile';
 import UserGuide from './pages/UserGuide';
 import './TechnicianDashboard.css';
+import API_URL from '../config/api';
 
 const TechnicianDashboard = () => {
   const [activeMenu, setActiveMenu] = useState('dashboard');
@@ -26,13 +27,13 @@ const TechnicianDashboard = () => {
   useEffect(() => {
     const fetchPopup = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/popup');
+        const res = await fetch(API_URL + '/api/popup');
         const data = await res.json();
 
         if (data.active && data.image_url) {
           Swal.fire({
             title: data.text || 'ประกาศข่าวสาร',
-            imageUrl: `http://localhost:5000${data.image_url}`,
+            imageUrl: `${API_URL}${data.image_url}`,
             imageWidth: 600,
             imageAlt: 'Announcement',
             confirmButtonText: 'รับทราบ',
@@ -58,7 +59,7 @@ const TechnicianDashboard = () => {
     const fetchUserName = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:5000/api/users/${userId}`, {
+        const res = await fetch(`${API_URL}/api/users/${userId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {

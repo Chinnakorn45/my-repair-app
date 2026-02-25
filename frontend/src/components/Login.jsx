@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { User, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
 import './Login.css';
+import API_URL from '../config/api';
 
 function Login({ onLoginSuccess, onSwitchToRegister }) {
   const [username, setUsername] = useState('');
@@ -18,10 +19,10 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
 
   const fetchLogo = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/settings/logo');
+      const res = await fetch(API_URL + '/api/settings/logo');
       const data = await res.json();
       if (data.hasLogo) {
-        setLogoUrl(`http://localhost:5000${data.logoUrl}?t=${Date.now()}`);
+        setLogoUrl(`${API_URL}${data.logoUrl}?t=${Date.now()}`);
       }
     } catch (err) {
       console.error("Error fetching logo", err);
@@ -34,7 +35,7 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(API_URL + '/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

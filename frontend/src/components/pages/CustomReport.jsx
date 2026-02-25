@@ -3,6 +3,7 @@ import { Printer, Filter, Calendar } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { formatThaiDate } from '../../utils/dateUtils';
 import './CustomReport.css';
+import API_URL from '../../config/api';
 
 const CustomReport = () => {
     const [tasks, setTasks] = useState([]);
@@ -24,7 +25,7 @@ const CustomReport = () => {
             try {
                 const token = localStorage.getItem('token');
 
-                const res = await fetch('http://localhost:5000/api/admin/tasks', {
+                const res = await fetch(API_URL + '/api/admin/tasks', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 

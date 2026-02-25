@@ -4,6 +4,7 @@ import {
   ArrowLeft, User, IdCard, Building, Phone, Mail, Lock, Key, UserPlus
 } from 'lucide-react';
 import './Register.css';
+import API_URL from '../config/api';
 
 function Register({ onRegisterSuccess, onSwitchToLogin }) {
   const [formData, setFormData] = useState({
@@ -54,7 +55,7 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
 
     try {
       // Fixed API endpoint
-      const response = await fetch('http://localhost:5000/api/auth/register', {
+      const response = await fetch(API_URL + '/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

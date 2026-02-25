@@ -18,6 +18,7 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import CustomReport from './pages/CustomReport';
 import UserGuide from './pages/UserGuide';
+import API_URL from '../config/api';
 
 const BuildingManager = lazy(() => import('./BuildingManager'));
 
@@ -61,7 +62,7 @@ export default function AdminDashboard({ userId, onLogout }) {
       try {
         const token = localStorage.getItem('token');
         const uid = userId || localStorage.getItem('user_id');
-        const res = await fetch(`http://localhost:5000/api/users/${uid}`, {
+        const res = await fetch(`${API_URL}/api/users/${uid}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
@@ -80,9 +81,9 @@ export default function AdminDashboard({ userId, onLogout }) {
       const headers = { 'Authorization': `Bearer ${token}` };
 
       const [statsRes, workloadRes, tasksRes] = await Promise.all([
-        fetch('http://localhost:5000/api/admin/stats', { headers }),
-        fetch('http://localhost:5000/api/admin/team-workload', { headers }),
-        fetch('http://localhost:5000/api/admin/tasks?status=pending', { headers })
+        fetch(API_URL + '/api/admin/stats', { headers }),
+        fetch(API_URL + '/api/admin/team-workload', { headers }),
+        fetch(API_URL + '/api/admin/tasks?status=pending', { headers })
       ]);
 
       if (statsRes.ok) setDashStats(await statsRes.json());
@@ -100,13 +101,13 @@ export default function AdminDashboard({ userId, onLogout }) {
 
   const fetchPopup = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/popup');
+      const res = await fetch(API_URL + '/api/popup');
       const data = await res.json();
 
       if (data.active && data.image_url) {
         Swal.fire({
           title: data.text || 'ประกาศข่าวสาร',
-          imageUrl: `http://localhost:5000${data.image_url}`,
+          imageUrl: `${API_URL}${data.image_url}`,
           imageWidth: 600,
           imageAlt: 'Announcement',
           confirmButtonText: 'รับทราบ',
@@ -156,7 +157,7 @@ export default function AdminDashboard({ userId, onLogout }) {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/admin/users', {
+      const response = await fetch(API_URL + '/api/admin/users', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -213,7 +214,7 @@ export default function AdminDashboard({ userId, onLogout }) {
           updateData.password = newUser.password;
         }
 
-        const response = await fetch(`http://localhost:5000/api/admin/users/${selectedUser.user_id}`, {
+        const response = await fetch(`${API_URL}/api/admin/users/${selectedUser.user_id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -233,7 +234,7 @@ export default function AdminDashboard({ userId, onLogout }) {
         }
       } else {
         // Create Mode
-        const response = await fetch('http://localhost:5000/api/admin/users', {
+        const response = await fetch(API_URL + '/api/admin/users', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -286,7 +287,7 @@ export default function AdminDashboard({ userId, onLogout }) {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+        const response = await fetch(`${API_URL}/api/admin/users/${userId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`

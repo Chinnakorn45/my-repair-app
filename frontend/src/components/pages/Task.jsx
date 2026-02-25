@@ -7,6 +7,7 @@ import {
   Hash, Search, Camera, Inbox, FileCheck, Trash2, Edit
 } from 'lucide-react';
 import { formatThaiDate } from '../../utils/dateUtils';
+import API_URL from '../../config/api';
 
 // Normalize image path from DB into a full URL
 const getImageUrl = (path) => {
@@ -16,7 +17,7 @@ const getImageUrl = (path) => {
     cleaned = cleaned.substring(cleaned.indexOf('uploads/'));
   }
   const normalized = cleaned.startsWith('/') ? cleaned : '/' + cleaned;
-  return `http://localhost:5000${normalized}`;
+  return `${API_URL}${normalized}`;
 };
 
 function Task() {
@@ -63,11 +64,11 @@ function Task() {
 
       let url = '';
       if (role === 'admin' || role === 'supervisor') {
-        url = 'http://localhost:5000/api/admin/tasks?status=all';
+        url = API_URL + '/api/admin/tasks?status=all';
       } else if (role === 'technician') {
-        url = 'http://localhost:5000/api/technician/tasks';
+        url = API_URL + '/api/technician/tasks';
       } else {
-        url = `http://localhost:5000/api/repair-requests/${userId}`;
+        url = `${API_URL}/api/repair-requests/${userId}`;
       }
 
       const response = await fetch(url, {
@@ -100,7 +101,7 @@ function Task() {
     if (role !== 'admin' && role !== 'supervisor') return;
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/admin/technicians', {
+      const response = await fetch(API_URL + '/api/admin/technicians', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
@@ -115,7 +116,7 @@ function Task() {
   const fetchBuildings = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/buildings', {
+      const response = await fetch(API_URL + '/api/buildings', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
@@ -144,7 +145,7 @@ function Task() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/repair-requests/${selectedTask.request_id}`, {
+      const response = await fetch(`${API_URL}/api/repair-requests/${selectedTask.request_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -180,7 +181,7 @@ function Task() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/repairs', {
+      const response = await fetch(API_URL + '/api/repairs', {
         method: 'POST',
         headers: {
           // 'Content-Type': 'multipart/form-data', // Fetch automatically sets this for FormData
@@ -228,7 +229,7 @@ function Task() {
         body.external_agency = selectedTechnician;
       }
 
-      const response = await fetch(`http://localhost:5000/api/repair-requests/${selectedTask.request_id}/assign`, {
+      const response = await fetch(`${API_URL}/api/repair-requests/${selectedTask.request_id}/assign`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -277,7 +278,7 @@ function Task() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/repair-requests/${task.request_id}`, {
+      const response = await fetch(`${API_URL}/api/repair-requests/${task.request_id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

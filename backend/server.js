@@ -23,7 +23,15 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
 // ================= Middleware =================
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.FRONTEND_URL, // Vercel URL เช่น https://my-repair-app.vercel.app
+].filter(Boolean);
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
 app.use(express.json());
 app.use('/api/Notifications', notificationRoutes);
 app.use('/api/settings', settingsRoutes);

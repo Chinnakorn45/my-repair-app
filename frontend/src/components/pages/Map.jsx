@@ -8,6 +8,7 @@ import './Map.css';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+import API_URL from '../../config/api';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -127,11 +128,11 @@ const Map = () => {
       setLoading(true);
       const token = localStorage.getItem('token');
 
-      let url = `http://localhost:5000/api/repair-requests/${userId}`;
+      let url = `${API_URL}/api/repair-requests/${userId}`;
       if (userRole === 'technician') {
-        url = `http://localhost:5000/api/technician/tasks`;
+        url = `${API_URL}/api/technician/tasks`;
       } else if (userRole === 'admin' || userRole === 'supervisor') {
-        url = `http://localhost:5000/api/admin/tasks`;
+        url = `${API_URL}/api/admin/tasks`;
       }
 
       const response = await fetch(url, {

@@ -6,6 +6,7 @@ import {
   Camera, X
 } from 'lucide-react';
 import { formatThaiDateTime } from '../../utils/dateUtils';
+import API_URL from '../../config/api';
 
 const History = ({ userId }) => {
   const [requests, setRequests] = useState([]);
@@ -46,11 +47,11 @@ const History = ({ userId }) => {
       setLoading(true);
       const token = localStorage.getItem('token');
 
-      let url = `http://localhost:5000/api/repair-requests/${currentUserId}`;
+      let url = `${API_URL}/api/repair-requests/${currentUserId}`;
       if (userRole === 'technician') {
-        url = `http://localhost:5000/api/technician/tasks`;
+        url = `${API_URL}/api/technician/tasks`;
       } else if (userRole === 'admin' || userRole === 'supervisor') {
-        url = `http://localhost:5000/api/admin/tasks`;
+        url = `${API_URL}/api/admin/tasks`;
       }
 
       const response = await fetch(url, {
@@ -190,7 +191,7 @@ const History = ({ userId }) => {
                         path = path.replace(/\\/g, '/');
                         if (path.includes('uploads/')) path = path.substring(path.indexOf('uploads/'));
                         else if (path.startsWith('/')) path = path.substring(1);
-                        return `http://localhost:5000/${path}`;
+                        return `${API_URL}/${path}`;
                       })()}
                       alt="Problem"
                       onError={(e) => {
@@ -209,7 +210,7 @@ const History = ({ userId }) => {
                         path = path.replace(/\\/g, '/');
                         if (path.includes('uploads/')) path = path.substring(path.indexOf('uploads/'));
                         else if (path.startsWith('/')) path = path.substring(1);
-                        return `http://localhost:5000/${path}`;
+                        return `${API_URL}/${path}`;
                       })()}
                       alt="Finished"
                       onError={(e) => e.target.style.display = 'none'}

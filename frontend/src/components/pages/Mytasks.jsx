@@ -6,6 +6,7 @@ import {
   X, ImageIcon, Hash
 } from 'lucide-react';
 import './Mytasks.css';
+import API_URL from '../../config/api';
 
 const MyTasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -28,7 +29,7 @@ const MyTasks = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch('http://localhost:5000/api/technician/tasks', {
+      const response = await fetch(API_URL + '/api/technician/tasks', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -72,7 +73,7 @@ const MyTasks = () => {
       const formData = new FormData();
       formData.append('status', newStatus);
 
-      const response = await fetch(`http://localhost:5000/api/technician/tasks/${taskId}/status`, {
+      const response = await fetch(`${API_URL}/api/technician/tasks/${taskId}/status`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -112,7 +113,7 @@ const MyTasks = () => {
       formData.append('image_after', imageFile);
       formData.append('repair_detail', repairDetail);
 
-      const response = await fetch(`http://localhost:5000/api/technician/tasks/${selectedTask}/status`, {
+      const response = await fetch(`${API_URL}/api/technician/tasks/${selectedTask}/status`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -266,7 +267,7 @@ const MyTasks = () => {
                           let path = task.image || '';
                           path = path.replace(/\\/g, '/');
                           if (path.includes('uploads/')) path = path.substring(path.indexOf('uploads/'));
-                          return `http://localhost:5000/${path}`;
+                          return `${API_URL}/${path}`;
                         })()}
                         alt=""
                         onError={(e) => {
@@ -389,7 +390,7 @@ const MyTasks = () => {
                             let path = detailTask.image || '';
                             path = path.replace(/\\/g, '/');
                             if (path.includes('uploads/')) path = path.substring(path.indexOf('uploads/'));
-                            return `http://localhost:5000/${path}`;
+                            return `${API_URL}/${path}`;
                           })()}
                           alt="ก่อนซ่อม"
                           onError={(e) => e.target.style.display = 'none'}
@@ -407,7 +408,7 @@ const MyTasks = () => {
                             path = path.replace(/\\/g, '/');
                             if (path.includes('uploads/')) path = path.substring(path.indexOf('uploads/'));
                             else if (path.startsWith('/')) path = path.substring(1);
-                            return `http://localhost:5000/${path}`;
+                            return `${API_URL}/${path}`;
                           })()}
                           alt="หลังซ่อม"
                           onError={(e) => e.target.style.display = 'none'}
@@ -496,7 +497,7 @@ const MyTasks = () => {
                         let path = task.image || '';
                         path = path.replace(/\\/g, '/');
                         if (path.includes('uploads/')) path = path.substring(path.indexOf('uploads/'));
-                        return `http://localhost:5000/${path}`;
+                        return `${API_URL}/${path}`;
                       })()}
                       alt="ก่อนซ่อม"
                       className="task-image-preview"

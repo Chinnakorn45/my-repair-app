@@ -8,6 +8,7 @@ import '../MapPicker.css'; // Reuse MapPicker styles for consistency
 
 // --- Leaflet Icon Fix ---
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+import API_URL from '../../config/api';
 
 // --- Constants (Same as MapPicker) ---
 const UNIVERSITY_CENTER = [9.08375, 99.36870];
@@ -137,7 +138,7 @@ const DashboardHome = ({ userId: propUserId }) => {
 
       if (role === 'technician') {
         // 1. If Technician -> Fetch Assigned Tasks
-        const response = await fetch(`http://localhost:5000/api/technician/tasks`, {
+        const response = await fetch(`${API_URL}/api/technician/tasks`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.status === 401) {
@@ -153,7 +154,7 @@ const DashboardHome = ({ userId: propUserId }) => {
 
         // 2. Fetch Unassigned Count for "Pending" Stat
         try {
-          const unassignedRes = await fetch(`http://localhost:5000/api/repair-requests/unassigned`, {
+          const unassignedRes = await fetch(`${API_URL}/api/repair-requests/unassigned`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           if (unassignedRes.ok) {
@@ -165,7 +166,7 @@ const DashboardHome = ({ userId: propUserId }) => {
         }
       } else {
         // 2. If User/Admin -> Fetch Reported Tasks (Original Logic)
-        const response = await fetch(`http://localhost:5000/api/repair-requests/${userId}`, {
+        const response = await fetch(`${API_URL}/api/repair-requests/${userId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error("ดึงข้อมูลไม่สำเร็จ");
@@ -175,7 +176,7 @@ const DashboardHome = ({ userId: propUserId }) => {
       // 3. Get Public Active Repairs
       let publicRepairs = [];
       try {
-        const pubRes = await fetch(`http://localhost:5000/api/repair-requests/public/in-progress`, {
+        const pubRes = await fetch(`${API_URL}/api/repair-requests/public/in-progress`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (pubRes.ok) publicRepairs = await pubRes.json();

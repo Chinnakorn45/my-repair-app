@@ -16,6 +16,7 @@ import {
   Menu, Bell, Clock, Wrench, CheckCircle, X,
   BarChart2, Users, FileText, User, LayoutDashboard, ClipboardList, TrendingUp, Save, BookOpen
 } from 'lucide-react';
+import API_URL from '../config/api';
 
 function SupervisorDashboard({ userId, onLogout }) {
   const [stats, setStats] = useState({
@@ -57,7 +58,7 @@ function SupervisorDashboard({ userId, onLogout }) {
       try {
         const token = localStorage.getItem('token');
         const uid = userId || localStorage.getItem('user_id');
-        const res = await fetch(`http://localhost:5000/api/users/${uid}`, {
+        const res = await fetch(`${API_URL}/api/users/${uid}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
@@ -71,13 +72,13 @@ function SupervisorDashboard({ userId, onLogout }) {
 
   const fetchPopup = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/popup');
+      const res = await fetch(API_URL + '/api/popup');
       const data = await res.json();
 
       if (data.active && data.image_url) {
         Swal.fire({
           title: data.text || 'ประกาศข่าวสาร',
-          imageUrl: `http://localhost:5000${data.image_url}`,
+          imageUrl: `${API_URL}${data.image_url}`,
           imageWidth: 600,
           imageAlt: 'Announcement',
           confirmButtonText: 'รับทราบ',
@@ -125,7 +126,7 @@ function SupervisorDashboard({ userId, onLogout }) {
 
   const fetchStats = async (token) => {
     try {
-      const response = await fetch('http://localhost:5000/api/admin/stats', {
+      const response = await fetch(API_URL + '/api/admin/stats', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       checkAuth(response);
@@ -140,7 +141,7 @@ function SupervisorDashboard({ userId, onLogout }) {
 
   const fetchTeamWorkload = async (token) => {
     try {
-      const response = await fetch('http://localhost:5000/api/admin/team-workload', {
+      const response = await fetch(API_URL + '/api/admin/team-workload', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       checkAuth(response);
@@ -156,7 +157,7 @@ function SupervisorDashboard({ userId, onLogout }) {
   const fetchTasks = async (token, statusOverride) => {
     const status = statusOverride ?? activeTab;
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/tasks?status=${status}`, {
+      const response = await fetch(`${API_URL}/api/admin/tasks?status=${status}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       checkAuth(response);
@@ -171,7 +172,7 @@ function SupervisorDashboard({ userId, onLogout }) {
 
   const fetchTechnicians = async (token) => {
     try {
-      const response = await fetch('http://localhost:5000/api/admin/technicians', {
+      const response = await fetch(API_URL + '/api/admin/technicians', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       checkAuth(response);
@@ -189,7 +190,7 @@ function SupervisorDashboard({ userId, onLogout }) {
 
     setAssigning(true);
     const token = localStorage.getItem('token');
-    const url = `http://localhost:5000/api/repair-requests/${selectedTask.request_id}/assign`;
+    const url = `${API_URL}/api/repair-requests/${selectedTask.request_id}/assign`;
     try {
       const response = await fetch(url, {
         method: 'PUT',
@@ -243,7 +244,7 @@ function SupervisorDashboard({ userId, onLogout }) {
 
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`http://localhost:5000/api/repairs`, {
+      const response = await fetch(`${API_URL}/api/repairs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -570,7 +571,7 @@ function SupervisorDashboard({ userId, onLogout }) {
                     path = path.replace(/\\/g, '/');
                     if (path.includes('uploads/')) path = path.substring(path.indexOf('uploads/'));
                     else if (path.startsWith('/')) path = path.substring(1);
-                    return `http://localhost:5000/${path}`;
+                    return `${API_URL}/${path}`;
                   })()}
                   alt="Before Repair"
                   style={{ width: '100%', borderRadius: '8px', marginTop: '5px' }}
@@ -587,7 +588,7 @@ function SupervisorDashboard({ userId, onLogout }) {
                     path = path.replace(/\\/g, '/');
                     if (path.includes('uploads/')) path = path.substring(path.indexOf('uploads/'));
                     else if (path.startsWith('/')) path = path.substring(1);
-                    return `http://localhost:5000/${path}`;
+                    return `${API_URL}/${path}`;
                   })()}
                   alt="After Repair"
                   style={{ width: '100%', borderRadius: '8px', marginTop: '5px' }}

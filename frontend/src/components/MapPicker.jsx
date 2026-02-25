@@ -2,6 +2,7 @@ import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from 'react-leaflet';
 import './MapPicker.css';
+import API_URL from '../config/api';
 
 // Coordinates for Suan Sunandha Rajabhat University Suratthani
 const UNIVERSITY_CENTER = [9.08375, 99.36870];
@@ -41,7 +42,7 @@ export default function MapPicker({ position, setPosition, onLocationUpdate, exi
       let buildingData = null;
       try {
         const buildingResponse = await fetch(
-          `http://localhost:5000/api/buildings/nearest?lat=${lat}&lng=${lng}`
+          `${API_URL}/api/buildings/nearest?lat=${lat}&lng=${lng}`
         );
         const buildingResult = await buildingResponse.json();
 
@@ -60,7 +61,7 @@ export default function MapPicker({ position, setPosition, onLocationUpdate, exi
       let osmData = null;
       try {
         const osmResponse = await fetch(
-          `http://localhost:5000/api/location/details?lat=${lat}&lon=${lng}`
+          `${API_URL}/api/location/details?lat=${lat}&lon=${lng}`
         );
         osmData = await osmResponse.json();
       } catch (error) {

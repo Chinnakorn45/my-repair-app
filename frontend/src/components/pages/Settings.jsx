@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { Upload, Save } from 'lucide-react';
 import '../AdminDashboard.css'; // Reuse generic styles or create Settings.css
+import API_URL from '../../config/api';
 
 const Settings = () => {
     const [logo, setLogo] = useState(null);
@@ -15,11 +16,11 @@ const Settings = () => {
 
     const fetchCurrentLogo = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/settings/logo');
+            const res = await fetch(API_URL + '/api/settings/logo');
             const data = await res.json();
             if (data.hasLogo) {
                 // Add timestamp to prevent caching
-                setCurrentLogo(`http://localhost:5000${data.logoUrl}?t=${Date.now()}`);
+                setCurrentLogo(`${API_URL}${data.logoUrl}?t=${Date.now()}`);
             }
         } catch (error) {
             console.error('Error fetching logo:', error);
@@ -49,7 +50,7 @@ const Settings = () => {
 
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5000/api/settings/logo', {
+            const response = await fetch(API_URL + '/api/settings/logo', {
                 method: 'POST',
                 body: formData
             });

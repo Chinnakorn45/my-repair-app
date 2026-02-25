@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { formatThaiDate } from '../../utils/dateUtils';
 import './Profile.css';
+import API_URL from '../../config/api';
 
 const Profile = ({ userId }) => {
   const [user, setUser] = useState(null);
@@ -26,7 +27,7 @@ const Profile = ({ userId }) => {
   const fetchUserProfile = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+      const response = await fetch(`${API_URL}/api/users/${userId}`, {
         headers: {
           'Authorization': 'Bearer ' + localStorage.getItem('token')
         }
@@ -65,7 +66,7 @@ const Profile = ({ userId }) => {
     setMessage({ type: '', text: '' });
 
     try {
-      const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+      const response = await fetch(`${API_URL}/api/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

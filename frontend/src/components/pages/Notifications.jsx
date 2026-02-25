@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { formatTimeAgo } from '../../utils/dateUtils';
 import './Notifications.css';
+import API_URL from '../../config/api';
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
@@ -14,7 +15,7 @@ const Notifications = () => {
   const fetchNotifications = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/notifications', {
+      const response = await fetch(API_URL + '/api/notifications', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -31,7 +32,7 @@ const Notifications = () => {
   const markAsRead = async (notificationId) => {
     try {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5000/api/notifications/${notificationId}/read`, {
+      await fetch(`${API_URL}/api/notifications/${notificationId}/read`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -51,7 +52,7 @@ const Notifications = () => {
   const markAllAsRead = async () => {
     try {
       const token = localStorage.getItem('token');
-      await fetch('http://localhost:5000/api/notifications/mark-all-read', {
+      await fetch(API_URL + '/api/notifications/mark-all-read', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -69,7 +70,7 @@ const Notifications = () => {
   const deleteNotification = async (notificationId) => {
     try {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5000/api/notifications/${notificationId}`, {
+      await fetch(`${API_URL}/api/notifications/${notificationId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

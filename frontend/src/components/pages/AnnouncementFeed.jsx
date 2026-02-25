@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Megaphone, Calendar } from 'lucide-react';
 import './Notifications.css';
+import API_URL from '../../config/api';
 
 const AnnouncementFeed = () => {
     const [announcements, setAnnouncements] = useState([]);
@@ -9,7 +10,7 @@ const AnnouncementFeed = () => {
     useEffect(() => {
         const fetchNews = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/announcements');
+                const res = await fetch(API_URL + '/api/announcements');
                 if (!res.ok) throw new Error('Failed to fetch announcements');
                 const data = await res.json();
                 setAnnouncements(Array.isArray(data) ? data : []);

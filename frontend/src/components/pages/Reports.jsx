@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { formatThaiDate, formatThaiMonth } from '../../utils/dateUtils';
 import './Reports.css';
+import API_URL from '../../config/api';
 
 const THAI_MONTHS = [
     { value: '1', label: 'มกราคม' },
@@ -46,7 +47,7 @@ const Reports = () => {
     const fetchAvailableYears = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5000/api/admin/reports/available-years', {
+            const res = await fetch(API_URL + '/api/admin/reports/available-years', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -74,10 +75,10 @@ const Reports = () => {
             const qs = buildQueryString();
 
             const [summaryRes, buildingRes, techRes, trendsRes] = await Promise.all([
-                fetch(`http://localhost:5000/api/admin/reports/summary${qs}`, { headers }),
-                fetch(`http://localhost:5000/api/admin/reports/by-building${qs}`, { headers }),
-                fetch(`http://localhost:5000/api/admin/reports/technician-performance${qs}`, { headers }),
-                fetch(`http://localhost:5000/api/admin/reports/monthly-trends${qs}`, { headers })
+                fetch(`${API_URL}/api/admin/reports/summary${qs}`, { headers }),
+                fetch(`${API_URL}/api/admin/reports/by-building${qs}`, { headers }),
+                fetch(`${API_URL}/api/admin/reports/technician-performance${qs}`, { headers }),
+                fetch(`${API_URL}/api/admin/reports/monthly-trends${qs}`, { headers })
             ]);
 
             if (!summaryRes.ok || !buildingRes.ok || !techRes.ok || !trendsRes.ok) {

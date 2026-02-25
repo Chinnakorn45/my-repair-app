@@ -16,6 +16,7 @@ import {
   ClipboardList
 } from 'lucide-react';
 import './BuildingManager.css';
+import API_URL from '../config/api';
 
 // Fix for default marker icon issue in React-Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -84,7 +85,7 @@ export default function BuildingManager() {
         return;
       }
 
-      const response = await fetch('http://localhost:5000/api/buildings', {
+      const response = await fetch(API_URL + '/api/buildings', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -108,7 +109,7 @@ export default function BuildingManager() {
   const fetchLocationDetails = async (lat, lng) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/location/details?lat=${lat}&lon=${lng}`
+        `${API_URL}/api/location/details?lat=${lat}&lon=${lng}`
       );
       if (response.ok) {
         const details = await response.json();
@@ -181,7 +182,7 @@ export default function BuildingManager() {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/buildings/${id}`, {
+        const response = await fetch(`${API_URL}/api/buildings/${id}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -220,11 +221,11 @@ export default function BuildingManager() {
 
     try {
       const token = localStorage.getItem('token');
-      let url = 'http://localhost:5000/api/buildings';
+      let url = API_URL + '/api/buildings';
       let method = 'POST';
 
       if (editingBuilding) {
-        url = `http://localhost:5000/api/buildings/${editingBuilding.building_id}`;
+        url = `${API_URL}/api/buildings/${editingBuilding.building_id}`;
         method = 'PUT';
       }
 

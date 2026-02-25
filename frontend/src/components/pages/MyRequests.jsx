@@ -5,6 +5,7 @@ import {
   Clock, Wrench, CheckCircle, MapPin,
   Calendar, ChevronRight, AlertCircle
 } from 'lucide-react';
+import API_URL from '../../config/api';
 
 const MyRequests = ({ userId }) => {
   const [requests, setRequests] = useState([]);
@@ -28,7 +29,7 @@ const MyRequests = ({ userId }) => {
         return;
       }
 
-      const response = await fetch(`http://localhost:5000/api/repair-requests/${currentUserId}`, {
+      const response = await fetch(`${API_URL}/api/repair-requests/${currentUserId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -82,7 +83,7 @@ const MyRequests = ({ userId }) => {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/repair-requests/${reqId}`, {
+        const response = await fetch(`${API_URL}/api/repair-requests/${reqId}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -114,7 +115,7 @@ const MyRequests = ({ userId }) => {
     if (!selectedRequest) return;
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/repair-requests/${selectedRequest.id}`, {
+      const response = await fetch(`${API_URL}/api/repair-requests/${selectedRequest.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -233,7 +234,7 @@ const MyRequests = ({ userId }) => {
                       } else if (path.startsWith('/')) {
                         path = path.substring(1);
                       }
-                      return `http://localhost:5000/${path}`;
+                      return `${API_URL}/${path}`;
                     })()}
                     alt="Problem"
                     onError={(e) => { e.target.style.display = 'none'; }}

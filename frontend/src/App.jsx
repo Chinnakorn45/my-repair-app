@@ -8,6 +8,7 @@ import Register from './components/Register';
 import SupervisorDashboard from './components/SupervisorDashboard';
 import TechnicianDashboard from './components/TechnicianDashboard';
 import UserDashboard from './components/UserDashboard'; // หรือ path ที่คุณเก็บไฟล์นี้ไว้
+import API_URL from './config/api';
 
 let socket;
 
@@ -30,7 +31,7 @@ function App() {
   }, []);
 
   const initSocket = () => {
-    socket = io('http://localhost:5000', {
+    socket = io(API_URL, {
       auth: {
         token: localStorage.getItem('token')
       }
@@ -75,7 +76,7 @@ function App() {
     formData.append('image', e.target.file.files[0]);
 
     try {
-      const response = await fetch('http://localhost:5000/api/repair-requests', {
+      const response = await fetch(API_URL + '/api/repair-requests', {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + localStorage.getItem('token')

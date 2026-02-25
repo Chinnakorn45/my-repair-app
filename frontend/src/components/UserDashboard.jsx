@@ -18,6 +18,7 @@ import NewRequest from "./pages/NewRepairRequest";
 // ✅ Import AnnouncementFeed
 import Notifications from "./pages/AnnouncementFeed";
 import UserGuide from './pages/UserGuide';
+import API_URL from '../config/api';
 
 const UserDashboard = ({ userId, onLogout }) => {
   const [activeMenu, setActiveMenu] = useState('dashboard');
@@ -28,7 +29,7 @@ const UserDashboard = ({ userId, onLogout }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+        const response = await fetch(`${API_URL}/api/users/${userId}`, {
           headers: {
             'Authorization': 'Bearer ' + localStorage.getItem('token')
           }
@@ -45,14 +46,14 @@ const UserDashboard = ({ userId, onLogout }) => {
 
     const fetchPopup = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/popup');
+        const res = await fetch(API_URL + '/api/popup');
         const data = await res.json();
 
         // Show popup if active and exists
         if (data.active && data.image_url) {
           Swal.fire({
             title: data.text || 'ประกาศข่าวสาร',
-            imageUrl: `http://localhost:5000${data.image_url}`,
+            imageUrl: `${API_URL}${data.image_url}`,
             imageWidth: 600,
             imageAlt: 'Announcement',
             confirmButtonText: 'รับทราบ',
