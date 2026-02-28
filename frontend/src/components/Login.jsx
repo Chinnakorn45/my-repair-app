@@ -98,7 +98,7 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
                   onChange={(e) => setUsername(e.target.value)}
                   required
                   className="form-input"
-                  placeholder="Username หรือ รหัสนักศึกษา/บุคลากร"
+                  placeholder="Username"
                 />
               </div>
             </div>
