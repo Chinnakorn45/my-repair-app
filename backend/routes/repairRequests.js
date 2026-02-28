@@ -247,6 +247,22 @@ module.exports = (upload, io) => {
         if (building_id !== undefined) {
           fields.push(`building_id = $${idx++}`);
           values.push(building_id || null);
+
+          // If a valid building_id is provided, fetch its lat/lng to update the request's location
+          if (building_id) {
+            try {
+              const buildingRes = await pool.query('SELECT lat, lng FROM buildings WHERE id = $1', [building_id]);
+              if (buildingRes.rows.length > 0) {
+                const { lat, lng } = buildingRes.rows[0];
+                fields.push(`lat = $${idx++}`);
+                values.push(lat);
+                fields.push(`lng = $${idx++}`);
+                values.push(lng);
+              }
+            } catch (err) {
+              console.error('Failed to fetch building coordinates during update:', err);
+            }
+          }
         }
 
         if (fields.length > 0) {
