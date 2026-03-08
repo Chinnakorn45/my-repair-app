@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DFD Level 1 - Process 3.0</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #fff;
+            font-family: 'Sarabun', 'Tahoma', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center
+        }
+
+        h2 {
+            font-size: 26px;
+            margin-bottom: 8px
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 400;
+            margin-top: 0;
+            color: #333;
+            margin-bottom: 30px
+        }
+
+        svg text {
+            font-family: 'Sarabun', 'Tahoma', sans-serif
+        }
+    </style>
+</head>
+
+<body>
+    <h2>แผนภาพกระแสข้อมูลระดับที่ 1</h2>
+    <h3>กระบวนการที่ 3.0 การจัดการอาคาร/สถานที่</h3>
+    <svg width="1500" height="950" viewBox="0 0 1500 950">
+        <defs>
+            <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0,10 3.5,0 7" fill="#000" />
+            </marker>
+        </defs>
+
+        <!-- ===== ENTITIES ===== -->
+        <rect x="30" y="150" width="160" height="55" fill="#fff" stroke="#000" stroke-width="2" />
+        <text x="110" y="184" text-anchor="middle" font-size="18" font-weight="600">ผู้ดูแลระบบ</text>
+
+        <rect x="30" y="700" width="140" height="55" fill="#fff" stroke="#000" stroke-width="2" />
+        <text x="100" y="734" text-anchor="middle" font-size="18" font-weight="600">ผู้ใช้งาน</text>
+
+        <!-- ===== ROW 1: PROCESSES (top row, wide spacing) ===== -->
+        <!-- 3.1 center=400 -->
+        <rect x="290" y="140" width="220" height="90" fill="#fff" stroke="#000" stroke-width="1.5" />
+        <rect x="290" y="140" width="220" height="28" fill="#ddd" stroke="#000" stroke-width="1.5" />
+        <text x="400" y="161" text-anchor="middle" font-size="16" font-weight="700">3.1</text>
+        <text x="400" y="200" text-anchor="middle" font-size="15">เพิ่มข้อมูลอาคาร</text>
+
+        <!-- 3.3 center=750 -->
+        <rect x="640" y="140" width="220" height="90" fill="#fff" stroke="#000" stroke-width="1.5" />
+        <rect x="640" y="140" width="220" height="28" fill="#ddd" stroke="#000" stroke-width="1.5" />
+        <text x="750" y="161" text-anchor="middle" font-size="16" font-weight="700">3.3</text>
+        <text x="750" y="200" text-anchor="middle" font-size="15">ลบข้อมูลอาคาร</text>
+
+        <!-- 3.2 center=1100 -->
+        <rect x="990" y="140" width="220" height="90" fill="#fff" stroke="#000" stroke-width="1.5" />
+        <rect x="990" y="140" width="220" height="28" fill="#ddd" stroke="#000" stroke-width="1.5" />
+        <text x="1100" y="161" text-anchor="middle" font-size="16" font-weight="700">3.2</text>
+        <text x="1100" y="200" text-anchor="middle" font-size="15">แก้ไขข้อมูลอาคาร</text>
+
+        <!-- ===== D2 (very wide, spans under all 3 processes) ===== -->
+        <line x1="340" y1="420" x2="1160" y2="420" stroke="#000" stroke-width="2" />
+        <line x1="340" y1="460" x2="1160" y2="460" stroke="#000" stroke-width="2" />
+        <line x1="340" y1="420" x2="340" y2="460" stroke="#000" stroke-width="2" />
+        <line x1="400" y1="420" x2="400" y2="460" stroke="#000" stroke-width="2" />
+        <text x="370" y="447" text-anchor="middle" font-size="14" font-weight="700">D2</text>
+        <text x="780" y="447" text-anchor="middle" font-size="14">ข้อมูลอาคาร</text>
+
+        <!-- ===== ROW 3: PROCESSES (bottom row) ===== -->
+        <!-- 3.4 center=500 -->
+        <rect x="390" y="690" width="220" height="90" fill="#fff" stroke="#000" stroke-width="1.5" />
+        <rect x="390" y="690" width="220" height="28" fill="#ddd" stroke="#000" stroke-width="1.5" />
+        <text x="500" y="711" text-anchor="middle" font-size="16" font-weight="700">3.4</text>
+        <text x="500" y="750" text-anchor="middle" font-size="15">ค้นหาข้อมูลอาคาร</text>
+
+        <!-- 3.5 center=1050 -->
+        <rect x="940" y="690" width="220" height="90" fill="#fff" stroke="#000" stroke-width="1.5" />
+        <rect x="940" y="690" width="220" height="28" fill="#ddd" stroke="#000" stroke-width="1.5" />
+        <text x="1050" y="711" text-anchor="middle" font-size="16" font-weight="700">3.5</text>
+        <text x="1050" y="750" text-anchor="middle" font-size="15">แสดงตำแหน่งอาคาร</text>
+
+        <!-- ============================================================ -->
+        <!-- ARROWS: ALL lines to D2 are STRAIGHT VERTICAL - NO ROUTING -->
+        <!-- ============================================================ -->
+
+        <!-- ผู้ดูแลระบบ → 3.1 (horizontal) -->
+        <line x1="190" y1="170" x2="288" y2="170" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="240" y="162" text-anchor="middle" font-size="14">ข้อมูลอาคารใหม่</text>
+
+        <!-- 3.1 → ผู้ดูแลระบบ (horizontal return) -->
+        <line x1="290" y1="200" x2="192" y2="200" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="240" y="218" text-anchor="middle" font-size="14">ผลลัพธ์การเพิ่ม</text>
+
+        <!-- 3.1 → D2: STRAIGHT DOWN at x=450 -->
+        <line x1="450" y1="230" x2="450" y2="418" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="460" y="330" font-size="14">บันทึกข้อมูลอาคาร</text>
+
+        <!-- ผู้ดูแลระบบ → 3.3 (route via top y=80) -->
+        <line x1="110" y1="150" x2="110" y2="80" stroke="#000" stroke-width="1.5" />
+        <line x1="110" y1="80" x2="750" y2="80" stroke="#000" stroke-width="1.5" />
+        <line x1="750" y1="80" x2="750" y2="138" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="430" y="72" text-anchor="middle" font-size="14">คำสั่งลบอาคาร</text>
+
+        <!-- 3.3 → D2: STRAIGHT DOWN at x=800 -->
+        <line x1="800" y1="230" x2="800" y2="418" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="810" y="330" font-size="14">ลบข้อมูลอาคาร</text>
+
+        <!-- ผู้ดูแลระบบ → 3.2 (route via top y=40) -->
+        <line x1="60" y1="150" x2="60" y2="40" stroke="#000" stroke-width="1.5" />
+        <line x1="60" y1="40" x2="1100" y2="40" stroke="#000" stroke-width="1.5" />
+        <line x1="1100" y1="40" x2="1100" y2="138" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="580" y="32" text-anchor="middle" font-size="14">ข้อมูลแก้ไขอาคาร</text>
+
+        <!-- 3.2 → D2: STRAIGHT DOWN at x=1100 -->
+        <line x1="1100" y1="230" x2="1100" y2="418" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="1110" y="330" font-size="14">อัปเดตข้อมูลอาคาร</text>
+
+        <!-- ผู้ใช้งาน → 3.4 -->
+        <line x1="170" y1="720" x2="388" y2="720" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="280" y="712" text-anchor="middle" font-size="14">คำค้นหาอาคาร</text>
+
+        <!-- 3.4 → ผู้ใช้งาน -->
+        <line x1="390" y1="750" x2="172" y2="750" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="280" y="768" text-anchor="middle" font-size="14">รายการอาคารที่พบ</text>
+
+        <!-- 3.4 → D2: STRAIGHT UP at x=550 -->
+        <line x1="550" y1="690" x2="550" y2="462" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="560" y="580" font-size="14">ค้นหาข้อมูลอาคาร</text>
+
+        <!-- ผู้ใช้งาน → 3.5 (route via bottom y=850) -->
+        <line x1="100" y1="755" x2="100" y2="850" stroke="#000" stroke-width="1.5" />
+        <line x1="100" y1="850" x2="1050" y2="850" stroke="#000" stroke-width="1.5" />
+        <line x1="1050" y1="850" x2="1050" y2="782" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="575" y="842" text-anchor="middle" font-size="14">ร้องขอดูตำแหน่ง</text>
+
+        <!-- 3.5 → D2: STRAIGHT UP at x=1000 -->
+        <line x1="1000" y1="690" x2="1000" y2="462" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="1010" y="580" font-size="14">อ่านข้อมูลพิกัด</text>
+
+        <!-- 3.5 → ผู้ใช้งาน (route via bottom y=900) -->
+        <line x1="1160" y1="780" x2="1160" y2="900" stroke="#000" stroke-width="1.5" />
+        <line x1="1160" y1="900" x2="60" y2="900" stroke="#000" stroke-width="1.5" />
+        <line x1="60" y1="900" x2="60" y2="757" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="610" y="892" text-anchor="middle" font-size="14">ข้อมูลพิกัดบนแผนที่</text>
+
+    </svg>
+</body>
+
+</html>

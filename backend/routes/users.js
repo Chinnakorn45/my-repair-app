@@ -6,7 +6,7 @@ const router = express.Router();
 // API: ดึงข้อมูลผู้ใช้ทั้งหมด (สำหรับ Admin)
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT user_id, username, email, first_name, student_id_staff_id, role, department, phone, created_at, updated_at FROM "USER" ORDER BY user_id ASC');
+    const result = await pool.query('SELECT user_id, username, email, first_name, student_id_staff_id, role, department, phone, specialty, created_at, updated_at FROM "USER" ORDER BY user_id ASC');
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -20,7 +20,7 @@ router.get('/:userId', async (req, res) => {
 
   try {
     const result = await pool.query(
-      'SELECT user_id, username, email, first_name, student_id_staff_id, role, department, phone, created_at, updated_at FROM "USER" WHERE user_id = $1',
+      'SELECT user_id, username, email, first_name, student_id_staff_id, role, department, phone, specialty, created_at, updated_at FROM "USER" WHERE user_id = $1',
       [userId]
     );
 

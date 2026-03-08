@@ -217,7 +217,7 @@ app.get('/api/admin/users', verifyToken, async (req, res) => {
       return res.status(403).json({ message: 'ไม่มีสิทธิ์เข้าถึง' });
     }
     const result = await pool.query(
-      `SELECT user_id, username, email, first_name, student_id_staff_id, role, department, phone
+      `SELECT user_id, username, email, first_name, student_id_staff_id, role, department, phone, specialty
        FROM "USER"
        ORDER BY role, first_name`
     );
@@ -233,7 +233,7 @@ app.post('/api/admin/users', verifyToken, async (req, res) => {
     if (req.user.role !== 'admin') {
       return res.status(403).json({ message: 'ไม่มีสิทธิ์เข้าถึง' });
     }
-    const { username, password, email, first_name, student_id_staff_id, role, department, phone } = req.body;
+    const { username, password, email, first_name, student_id_staff_id, role, department, phone, specialty } = req.body;
     if (!username || !password || !first_name || !role) {
       return res.status(400).json({ message: 'กรุณากรอก username, password, ชื่อ และสิทธิ์' });
     }
@@ -244,10 +244,10 @@ app.post('/api/admin/users', verifyToken, async (req, res) => {
     const bcrypt = require('bcrypt');
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
-      `INSERT INTO "USER" (username, password, email, first_name, student_id_staff_id, role, department, phone) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
-       RETURNING user_id, username, email, first_name, student_id_staff_id, role, department, phone`,
-      [username, hashedPassword, email || null, first_name, student_id_staff_id || null, role, department || null, phone || null]
+      `INSERT INTO "USER" (username, password, email, first_name, student_id_staff_id, role, department, phone, specialty) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+       RETURNING user_id, username, email, first_name, student_id_staff_id, role, department, phone, specialty`,
+      [username, hashedPassword, email || null, first_name, student_id_staff_id || null, role, department || null, phone || null, role === 'technician' ? (specialty || null) : null]
     );
     res.status(201).json({ message: 'เพิ่มผู้ใช้งานสำเร็จ', user: result.rows[0] });
   } catch (err) {
@@ -262,7 +262,7 @@ app.put('/api/admin/users/:user_id', verifyToken, async (req, res) => {
       return res.status(403).json({ message: 'ไม่มีสิทธิ์เข้าถึง' });
     }
     const { user_id } = req.params;
-    const { username, password, email, first_name, student_id_staff_id, role, department, phone } = req.body;
+    const { username, password, email, first_name, student_id_staff_id, role, department, phone, specialty } = req.body;
 
     if (username) {
       const existingUser = await pool.query('SELECT * FROM "USER" WHERE username = $1 AND user_id != $2', [username, user_id]);
@@ -285,6 +285,7 @@ app.put('/api/admin/users/:user_id', verifyToken, async (req, res) => {
     if (role) { updates.push(`role = $${paramIndex++}`); values.push(role); }
     if (department !== undefined) { updates.push(`department = $${paramIndex++}`); values.push(department || null); }
     if (phone !== undefined) { updates.push(`phone = $${paramIndex++}`); values.push(phone || null); }
+    if (specialty !== undefined) { updates.push(`specialty = $${paramIndex++}`); values.push(role === 'technician' ? (specialty || null) : null); }
 
     if (updates.length === 0) return res.status(400).json({ message: 'ไม่มีข้อมูลที่จะอัปเดต' });
 
@@ -384,8 +385,8 @@ app.get('/api/admin/tasks', verifyToken, async (req, res) => {
 app.get('/api/admin/technicians', verifyToken, async (req, res) => {
   try {
     if (req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.status(403).json({ message: 'ไม่มีสิทธิ์เข้าถึง' });
-    const result = await pool.query(`SELECT user_id, first_name FROM "USER" WHERE role = 'technician' ORDER BY first_name`);
-    res.json(result.rows.map(r => ({ id: r.user_id, name: r.first_name, initials: r.first_name.charAt(0).toUpperCase(), status: 'พร้อม' })));
+    const result = await pool.query(`SELECT user_id, first_name, specialty FROM "USER" WHERE role = 'technician' ORDER BY first_name`);
+    res.json(result.rows.map(r => ({ id: r.user_id, name: r.first_name, specialty: r.specialty || null, initials: r.first_name.charAt(0).toUpperCase(), status: 'พร้อม' })));
   } catch (err) {
     console.error('Get technicians error:', err);
     res.status(500).json({ error: err.message });

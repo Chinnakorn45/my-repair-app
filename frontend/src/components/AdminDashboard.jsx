@@ -38,7 +38,8 @@ export default function AdminDashboard({ userId, onLogout }) {
     student_id_staff_id: '',
     role: 'user',
     department: '',
-    phone: ''
+    phone: '',
+    specialty: ''
   });
 
   // States for system settings
@@ -184,12 +185,14 @@ export default function AdminDashboard({ userId, onLogout }) {
         student_id_staff_id: selectedUser.student_id_staff_id || '',
         role: selectedUser.role || 'user',
         department: selectedUser.department || '',
-        phone: selectedUser.phone || ''
+        phone: selectedUser.phone || '',
+        specialty: selectedUser.specialty || ''
       });
     } else {
       setNewUser({
         username: '', password: '', email: '', first_name: '',
-        student_id_staff_id: '', role: 'user', department: '', phone: ''
+        student_id_staff_id: '', role: 'user', department: '', phone: '',
+        specialty: ''
       });
     }
   }, [selectedUser]);
@@ -207,7 +210,8 @@ export default function AdminDashboard({ userId, onLogout }) {
           phone: newUser.phone,
           student_id_staff_id: newUser.student_id_staff_id,
           department: newUser.department,
-          role: newUser.role
+          role: newUser.role,
+          specialty: newUser.role === 'technician' ? newUser.specialty : ''
         };
         // Include password only if user typed a new one
         if (newUser.password) {
@@ -248,7 +252,8 @@ export default function AdminDashboard({ userId, onLogout }) {
             phone: newUser.phone,
             student_id_staff_id: newUser.student_id_staff_id,
             department: newUser.department,
-            role: newUser.role
+            role: newUser.role,
+            specialty: newUser.role === 'technician' ? newUser.specialty : ''
           })
         });
 
@@ -258,7 +263,8 @@ export default function AdminDashboard({ userId, onLogout }) {
           setSelectedUser(null);
           setNewUser({
             username: '', password: '', email: '', first_name: '',
-            student_id_staff_id: '', role: 'user', department: '', phone: ''
+            student_id_staff_id: '', role: 'user', department: '', phone: '',
+            specialty: ''
           });
           fetchUsers();
         } else {
@@ -581,6 +587,12 @@ export default function AdminDashboard({ userId, onLogout }) {
                             <span className={`role-badge ${getRoleBadgeColor(user.role)}`}>
                               {getRoleLabel(user.role)}
                             </span>
+                            {user.role === 'technician' && user.specialty && (
+                              <div style={{ fontSize: '12px', color: '#f59e0b', marginTop: '4px' }}>
+                                <Wrench size={12} style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                {user.specialty}
+                              </div>
+                            )}
                           </td>
                           <td>{user.department || '-'}</td>
                           <td>
@@ -746,6 +758,25 @@ export default function AdminDashboard({ userId, onLogout }) {
                     <option value="admin">Admin (ผู้ดูแลระบบ)</option>
                   </select>
                 </div>
+
+                {newUser.role === 'technician' && (
+                  <div className="form-group">
+                    <label>🔧 ความถนัดของช่าง</label>
+                    <select
+                      value={newUser.specialty}
+                      onChange={e => setNewUser({ ...newUser, specialty: e.target.value })}
+                    >
+                      <option value="">-- เลือกความถนัด --</option>
+                      <option value="ไฟฟ้า">ไฟฟ้า</option>
+                      <option value="ประปา">ประปา</option>
+                      <option value="แอร์/เครื่องปรับอากาศ">แอร์/เครื่องปรับอากาศ</option>
+                      <option value="งานไม้">งานไม้</option>
+                      <option value="งานสี">งานสี</option>
+                      <option value="โครงสร้าง/งานปูน">โครงสร้าง/งานปูน</option>
+                      <option value="ทั่วไป">ทั่วไป</option>
+                    </select>
+                  </div>
+                )}
               </form>
             </div>
 

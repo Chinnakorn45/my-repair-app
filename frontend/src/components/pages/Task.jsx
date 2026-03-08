@@ -759,7 +759,9 @@ function Task() {
                 >
                   <option value="">-- เลือกช่าง --</option>
                   {technicians.map(tech => (
-                    <option key={tech.id} value={tech.id}>{tech.name}</option>
+                    <option key={tech.id} value={tech.id}>
+                      {tech.name}{tech.specialty ? ` (${tech.specialty})` : ''}
+                    </option>
                   ))}
                 </select>
               </div>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1400, initial-scale=1.0">
+    <title>ER Diagram - ระบบแจ้งซ่อม มรส.</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .diagram-container {
+            width: 1200px;
+            height: 900px;
+            position: relative;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Entity rectangles */
+        .entity-rect {
+            fill: #ffffff;
+            stroke: #333333;
+            stroke-width: 2;
+        }
+
+        .entity-rect-double {
+            fill: #ffffff;
+            stroke: #333333;
+            stroke-width: 2;
+        }
+
+        /* Attribute ellipses */
+        .attr-ellipse {
+            fill: #ffffff;
+            stroke: #555555;
+            stroke-width: 1.5;
+        }
+
+        .attr-ellipse-key {
+            fill: #ffffff;
+            stroke: #555555;
+            stroke-width: 1.5;
+        }
+
+        /* Relationship diamonds */
+        .rel-diamond {
+            fill: #ffffff;
+            stroke: #333333;
+            stroke-width: 2;
+        }
+
+        /* Lines */
+        .conn-line {
+            stroke: #444444;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        /* Text */
+        .entity-text {
+            font-family: 'Sarabun', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            fill: #1a1a1a;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        .attr-text {
+            font-family: 'Sarabun', sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+            fill: #333333;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        .attr-text-key {
+            font-family: 'Sarabun', sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+            fill: #333333;
+            text-anchor: middle;
+            dominant-baseline: central;
+            text-decoration: underline;
+        }
+
+        .rel-text {
+            font-family: 'Sarabun', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            fill: #1a1a1a;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        .card-text {
+            font-family: 'Sarabun', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            fill: #333333;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>ER Diagram ระบบจัดการแจ้งซ่อมเชิงพื้นที่ มหาวิทยาลัยราชภัฏสุราษฎร์ธานี</h1>
+
+    <div class="diagram-container">
+        <svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+
+            <!-- ============================================================= -->
+            <!-- ENTITY: ผู้ใช้งาน (USER) - top left -->
+            <!-- ============================================================= -->
+            <g id="entity-user">
+                <!-- Double rectangle for entity -->
+                <rect x="55" y="205" width="120" height="45" class="entity-rect" />
+                <rect x="59" y="209" width="112" height="37" class="entity-rect-double" />
+                <text x="115" y="228" class="entity-text">ผู้ใช้งาน</text>
+
+                <!-- Attributes around USER entity -->
+                <!-- email (top-left area) -->
+                <line x1="100" y1="205" x2="85" y2="155" class="conn-line" />
+                <ellipse cx="85" cy="140" rx="40" ry="16" class="attr-ellipse" />
+                <text x="85" y="140" class="attr-text">email</text>
+
+                <!-- รหัสผ่าน -->
+                <line x1="145" y1="205" x2="190" y2="160" class="conn-line" />
+                <ellipse cx="190" cy="145" rx="40" ry="16" class="attr-ellipse" />
+                <text x="190" y="145" class="attr-text">รหัสผ่าน</text>
+
+                <!-- ชื่อบัญชีผู้ใช้ -->
+                <line x1="130" y1="205" x2="135" y2="115" class="conn-line" />
+                <ellipse cx="135" cy="98" rx="52" ry="16" class="attr-ellipse" />
+                <text x="135" y="98" class="attr-text">ชื่อบัญชีผู้ใช้</text>
+
+                <!-- เบอร์โทร (key - underline) -->
+                <line x1="55" y1="220" x2="10" y2="175" class="conn-line" />
+                <ellipse cx="10" cy="160" rx="42" ry="16" class="attr-ellipse" />
+                <text x="10" y="160" class="attr-text">เบอร์โทร</text>
+
+                <!-- รหัสนักศึกษา/บุคลากร -->
+                <line x1="55" y1="235" x2="10" y2="250" class="conn-line" />
+                <ellipse cx="10" cy="260" rx="55" ry="16" class="attr-ellipse-key" />
+                <text x="10" y="260" class="attr-text-key">รหัสนักศึกษา</text>
+
+                <!-- บทบาท/สิทธิ์ -->
+                <line x1="70" y1="250" x2="30" y2="300" class="conn-line" />
+                <ellipse cx="30" cy="315" rx="48" ry="16" class="attr-ellipse" />
+                <text x="30" y="315" class="attr-text">บทบาท/สิทธิ์</text>
+
+                <!-- หน่วยงาน -->
+                <line x1="90" y1="250" x2="55" y2="355" class="conn-line" />
+                <ellipse cx="55" cy="370" rx="45" ry="16" class="attr-ellipse" />
+                <text x="55" y="370" class="attr-text">หน่วยงาน</text>
+
+                <!-- ชื่อ-นามสกุล -->
+                <line x1="115" y1="250" x2="140" y2="300" class="conn-line" />
+                <ellipse cx="145" cy="315" rx="48" ry="16" class="attr-ellipse" />
+                <text x="145" y="315" class="attr-text">ชื่อ-นามสกุล</text>
+            </g>
+
+            <!-- ============================================================= -->
+            <!-- RELATIONSHIP: แจ้งซ่อม (USER -> REPAIR_REQUEST) -->
+            <!-- ============================================================= -->
+            <g id="rel-report">
+                <line x1="175" y1="228" x2="265" y2="228" class="conn-line" />
+                <polygon points="310,228 265,205 265,250" class="rel-diamond" transform="rotate(0,287,228)" />
+                <!-- Diamond shape -->
+                <polygon points="310,228 287,208 265,228 287,248" class="rel-diamond" />
+                <text x="287" y="228" class="rel-text">แจ้งซ่อม</text>
+                <line x1="310" y1="228" x2="400" y2="228" class="conn-line" />
+
+                <!-- Cardinality -->
+                <text x="200" y="218" class="card-text">1</text>
+                <text x="375" y="218" class="card-text">N</text>
+            </g>
+
+            <!-- ============================================================= -->
+            <!-- ENTITY: ข้อมูลการแจ้งซ่อม (REPAIR_REQUEST) - center top -->
+            <!-- ============================================================= -->
+            <g id="entity-repair-request">
+                <rect x="400" y="205" width="165" height="45" class="entity-rect" />
+                <rect x="404" y="209" width="157" height="37" class="entity-rect-double" />
+                <text x="483" y="228" class="entity-text">ข้อมูลการแจ้งซ่อม</text>
+
+                <!-- Attributes -->
+                <!-- รหัสผู้แจ้ง -->
+                <line x1="440" y1="205" x2="400" y2="155" class="conn-line" />
+                <ellipse cx="390" cy="140" rx="45" ry="16" class="attr-ellipse" />
+                <text x="390" y="140" class="attr-text">รหัสผู้แจ้ง</text>
+
+                <!-- รหัสอาคาร -->
+                <line x1="460" y1="205" x2="450" y2="150" class="conn-line" />
+                <ellipse cx="450" cy="135" rx="42" ry="16" class="attr-ellipse" />
+                <text x="450" y="135" class="attr-text">รหัสอาคาร</text>
+
+                <!-- วันรับแจ้ง -->
+                <line x1="480" y1="205" x2="500" y2="130" class="conn-line" />
+                <ellipse cx="510" cy="115" rx="42" ry="16" class="attr-ellipse" />
+                <text x="510" y="115" class="attr-text">วันรับแจ้ง</text>
+
+                <!-- รายละเอียดปัญหา -->
+                <line x1="505" y1="205" x2="560" y2="95" class="conn-line" />
+                <ellipse cx="575" cy="78" rx="55" ry="20" class="attr-ellipse" />
+                <text x="575" y="73" class="attr-text">รายละเอียด</text>
+                <text x="575" y="88" class="attr-text">ปัญหา</text>
+
+                <!-- พิกัดละจิจูด -->
+                <line x1="530" y1="205" x2="600" y2="150" class="conn-line" />
+                <ellipse cx="620" cy="138" rx="48" ry="16" class="attr-ellipse" />
+                <text x="620" y="138" class="attr-text">พิกัดละจิจูด</text>
+
+                <!-- สถานะงาน -->
+                <line x1="550" y1="210" x2="680" y2="155" class="conn-line" />
+                <ellipse cx="700" cy="145" rx="45" ry="16" class="attr-ellipse" />
+                <text x="700" y="145" class="attr-text">สถานะงาน</text>
+
+                <!-- พิกัดลองจิจูด -->
+                <line x1="555" y1="220" x2="705" y2="185" class="conn-line" />
+                <ellipse cx="725" cy="178" rx="52" ry="16" class="attr-ellipse" />
+                <text x="725" y="178" class="attr-text">พิกัดลองจิจูด</text>
+
+                <!-- รูปก่อนซ่อม -->
+                <line x1="565" y1="235" x2="710" y2="218" class="conn-line" />
+                <ellipse cx="730" cy="215" rx="48" ry="16" class="attr-ellipse" />
+                <text x="730" y="215" class="attr-text">รูปก่อนซ่อม</text>
+
+                <!-- รหัสสถานะแจ้งซ่อม (PK) -->
+                <line x1="410" y1="205" x2="330" y2="145" class="conn-line" />
+                <ellipse cx="310" cy="130" rx="60" ry="16" class="attr-ellipse-key" />
+                <text x="310" y="130" class="attr-text-key">รหัสสถานะแจ้งซ่อม</text>
+            </g>
+
+            <!-- ============================================================= -->
+            <!-- RELATIONSHIP: ถูกซ่อม (REPAIR_REQUEST -> REPAIR) -->
+            <!-- ============================================================= -->
+            <g id="rel-repaired">
+                <line x1="455" y1="250" x2="400" y2="340" class="conn-line" />
+                <polygon points="400,340 375,365 400,390 425,365" class="rel-diamond" />
+                <text x="400" y="365" class="rel-text">ถูกซ่อม</text>
+                <line x1="400" y1="390" x2="370" y2="470" class="conn-line" />
+
+                <!-- Cardinality -->
+                <text x="445" y="290" class="card-text">1</text>
+                <text x="412" y="440" class="card-text">1</text>
+            </g>
+
+            <!-- ============================================================= -->
+            <!-- RELATIONSHIP: จัดการ (REPAIR_REQUEST -> BUILDINGS) -->
+            <!-- ============================================================= -->
+            <g id="rel-manage">
+                <line x1="530" y1="250" x2="610" y2="340" class="conn-line" />
+                <polygon points="610,340 585,365 610,390 635,365" class="rel-diamond" />
+                <text x="610" y="365" class="rel-text">จัดการ</text>
+                <line x1="610" y1="390" x2="640" y2="460" class="conn-line" />
+
+                <!-- Cardinality -->
+                <text x="565" y="290" class="card-text">M</text>
+                <text x="645" y="440" class="card-text">1</text>
+            </g>
+
+            <!-- ============================================================= -->
+            <!-- ENTITY: การซ่อม (REPAIR) - bottom left -->
+            <!-- ============================================================= -->
+            <g id="entity-repair">
+                <rect x="290" y="470" width="120" height="45" class="entity-rect" />
+                <rect x="294" y="474" width="112" height="37" class="entity-rect-double" />
+                <text x="350" y="493" class="entity-text">การซ่อม</text>
+
+                <!-- Attributes -->
+                <!-- รหัสบันทึกการซ่อม (PK) -->
+                <line x1="330" y1="470" x2="310" y2="430" class="conn-line" />
+                <ellipse cx="280" cy="420" rx="60" ry="16" class="attr-ellipse-key" />
+                <text x="280" y="420" class="attr-text-key">รหัสบันทึกการซ่อม</text>
+
+                <!-- รหัสการแจ้งซ่อม (FK) -->
+                <line x1="290" y1="485" x2="215" y2="455" class="conn-line" />
+                <ellipse cx="185" cy="445" rx="52" ry="16" class="attr-ellipse" />
+                <text x="185" y="445" class="attr-text">รหัสการแจ้งซ่อม</text>
+
+                <!-- รหัสผู้แจ้ง -->
+                <line x1="290" y1="500" x2="195" y2="500" class="conn-line" />
+                <ellipse cx="165" cy="500" rx="40" ry="16" class="attr-ellipse" />
+                <text x="165" y="500" class="attr-text">รหัสผู้แจ้ง</text>
+
+                <!-- รายละเอียดการซ่อม -->
+                <line x1="290" y1="510" x2="175" y2="555" class="conn-line" />
+                <ellipse cx="145" cy="562" rx="60" ry="16" class="attr-ellipse" />
+                <text x="145" y="562" class="attr-text">รายละเอียดการซ่อม</text>
+
+                <!-- รูปหลังซ่อม -->
+                <line x1="330" y1="515" x2="280" y2="580" class="conn-line" />
+                <ellipse cx="265" cy="593" rx="48" ry="16" class="attr-ellipse" />
+                <text x="265" y="593" class="attr-text">รูปหลังซ่อม</text>
+
+                <!-- สถานะ -->
+                <line x1="370" y1="515" x2="370" y2="590" class="conn-line" />
+                <ellipse cx="370" cy="605" rx="35" ry="16" class="attr-ellipse" />
+                <text x="370" y="605" class="attr-text">สถานะ</text>
+
+                <!-- วันที่ซ่อม -->
+                <line x1="390" y1="515" x2="440" y2="570" class="conn-line" />
+                <ellipse cx="455" cy="580" rx="42" ry="16" class="attr-ellipse" />
+                <text x="455" y="580" class="attr-text">วันที่ซ่อม</text>
+            </g>
+
+            <!-- ============================================================= -->
+            <!-- ENTITY: อาคารสถานที่ (BUILDINGS) - bottom right -->
+            <!-- ============================================================= -->
+            <g id="entity-buildings">
+                <rect x="595" y="460" width="135" height="45" class="entity-rect" />
+                <rect x="599" y="464" width="127" height="37" class="entity-rect-double" />
+                <text x="663" y="483" class="entity-text">อาคารสถานที่</text>
+
+                <!-- Attributes -->
+                <!-- รหัสอาคาร (PK) -->
+                <line x1="730" y1="475" x2="810" y2="445" class="conn-line" />
+                <ellipse cx="840" cy="435" rx="42" ry="16" class="attr-ellipse-key" />
+                <text x="840" y="435" class="attr-text-key">รหัสอาคาร</text>
+
+                <!-- ชื่ออาคาร -->
+                <line x1="730" y1="483" x2="830" y2="475" class="conn-line" />
+                <ellipse cx="860" cy="470" rx="42" ry="16" class="attr-ellipse" />
+                <text x="860" y="470" class="attr-text">ชื่ออาคาร</text>
+
+                <!-- หน่วยงาน -->
+                <line x1="730" y1="490" x2="840" y2="510" class="conn-line" />
+                <ellipse cx="870" cy="510" rx="42" ry="16" class="attr-ellipse" />
+                <text x="870" y="510" class="attr-text">หน่วยงาน</text>
+
+                <!-- พิกัดละจิจูดประจำอาคาร -->
+                <line x1="720" y1="505" x2="810" y2="550" class="conn-line" />
+                <ellipse cx="845" cy="555" rx="70" ry="16" class="attr-ellipse" />
+                <text x="845" y="555" class="attr-text">พิกัดละจิจูดประจำอาคาร</text>
+
+                <!-- พิกัดลองจิจูดประจำอาคาร -->
+                <line x1="700" y1="505" x2="780" y2="590" class="conn-line" />
+                <ellipse cx="815" cy="595" rx="72" ry="16" class="attr-ellipse" />
+                <text x="815" y="595" class="attr-text">พิกัดลองจิจูดประจำอาคาร</text>
+            </g>
+
+            <!-- ============================================================= -->
+            <!-- RELATIONSHIP: ถูกซ่อม/ประกาศ (REPAIR_REQUEST -> ข้อมูลข่าวสาร) -->
+            <!-- ============================================================= -->
+            <g id="rel-news">
+                <line x1="498" y1="250" x2="540" y2="330" class="conn-line" />
+                <polygon points="540,330 515,350 540,370 565,350" class="rel-diamond" />
+                <text x="540" y="350" class="rel-text">ถูกซ่อม</text>
+                <line x1="540" y1="370" x2="560" y2="640" class="conn-line" />
+
+                <!-- Cardinality -->
+                <text x="518" y="310" class="card-text">1</text>
+                <text x="565" y="450" class="card-text">N</text>
+            </g>
+
+            <!-- ============================================================= -->
+            <!-- ENTITY: ข้อมูลข่าวสาร (ANNOUNCEMENTS) - bottom center -->
+            <!-- ============================================================= -->
+            <g id="entity-announcements">
+                <rect x="495" y="640" width="130" height="45" class="entity-rect" />
+                <rect x="499" y="644" width="122" height="37" class="entity-rect-double" />
+                <text x="560" y="663" class="entity-text">ข้อมูลข่าวสาร</text>
+
+                <!-- Attributes -->
+                <!-- รหัสประกาศ (PK) -->
+                <line x1="520" y1="685" x2="480" y2="730" class="conn-line" />
+                <ellipse cx="465" cy="745" rx="45" ry="16" class="attr-ellipse-key" />
+                <text x="465" y="745" class="attr-text-key">รหัสประกาศ</text>
+
+                <!-- หัวข้อข่าว -->
+                <line x1="545" y1="685" x2="520" y2="760" class="conn-line" />
+                <ellipse cx="510" cy="775" rx="42" ry="16" class="attr-ellipse" />
+                <text x="510" y="775" class="attr-text">หัวข้อข่าว</text>
+
+                <!-- เนื้อหาประกาศ -->
+                <line x1="575" y1="685" x2="620" y2="760" class="conn-line" />
+                <ellipse cx="635" cy="770" rx="50" ry="16" class="attr-ellipse" />
+                <text x="635" y="770" class="attr-text">เนื้อหาประกาศ</text>
+
+                <!-- รหัสผู้สร้างประกาศ -->
+                <line x1="600" y1="685" x2="690" y2="730" class="conn-line" />
+                <ellipse cx="715" cy="738" rx="58" ry="16" class="attr-ellipse" />
+                <text x="715" y="738" class="attr-text">รหัสผู้สร้างประกาศ</text>
+            </g>
+
+            <!-- ============================================================= -->
+            <!-- ENTITY: การแจ้งเตือน (NOTIFICATIONS) - far bottom -->
+            <!-- ============================================================= -->
+            <g id="entity-notifications">
+                <rect x="80" y="680" width="130" height="45" class="entity-rect" />
+                <rect x="84" y="684" width="122" height="37" class="entity-rect-double" />
+                <text x="145" y="703" class="entity-text">การแจ้งเตือน</text>
+
+                <!-- Connection from USER -->
+                <line x1="115" y1="250" x2="115" y2="400" class="conn-line" />
+                <!-- Relationship diamond -->
+                <polygon points="115,400 90,420 115,440 140,420" class="rel-diamond" />
+                <text x="115" y="420" class="rel-text">แจ้ง</text>
+                <line x1="115" y1="440" x2="130" y2="680" class="conn-line" />
+
+                <!-- Cardinality -->
+                <text x="130" y="380" class="card-text">1</text>
+                <text x="145" y="580" class="card-text">N</text>
+
+                <!-- Attributes -->
+                <!-- รหัสแจ้งเตือน (PK) -->
+                <line x1="80" y1="695" x2="20" y2="670" class="conn-line" />
+                <ellipse cx="0" cy="658" rx="48" ry="16" class="attr-ellipse-key" />
+                <text x="0" y="658" class="attr-text-key">รหัสแจ้งเตือน</text>
+
+                <!-- ประเภท -->
+                <line x1="80" y1="710" x2="15" y2="720" class="conn-line" />
+                <ellipse cx="-5" cy="725" rx="36" ry="16" class="attr-ellipse" />
+                <text x="-5" y="725" class="attr-text">ประเภท</text>
+
+                <!-- หัวข้อ -->
+                <line x1="95" y1="725" x2="30" y2="775" class="conn-line" />
+                <ellipse cx="15" cy="783" rx="36" ry="16" class="attr-ellipse" />
+                <text x="15" y="783" class="attr-text">หัวข้อ</text>
+
+                <!-- ข้อความ -->
+                <line x1="130" y1="725" x2="110" y2="790" class="conn-line" />
+                <ellipse cx="105" cy="802" rx="38" ry="16" class="attr-ellipse" />
+                <text x="105" y="802" class="attr-text">ข้อความ</text>
+
+                <!-- สถานะอ่าน -->
+                <line x1="170" y1="725" x2="210" y2="780" class="conn-line" />
+                <ellipse cx="220" cy="792" rx="42" ry="16" class="attr-ellipse" />
+                <text x="220" y="792" class="attr-text">สถานะอ่าน</text>
+            </g>
+
+        </svg>
+    </div>
+</body>
+
+</html>

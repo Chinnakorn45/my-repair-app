@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DFD Level 0 - Context Diagram</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #fff;
+            font-family: 'Sarabun', 'Tahoma', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center
+        }
+
+        h2 {
+            font-size: 26px;
+            margin-bottom: 8px
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 400;
+            margin-top: 0;
+            color: #333;
+            margin-bottom: 30px
+        }
+
+        svg text {
+            font-family: 'Sarabun', 'Tahoma', sans-serif
+        }
+    </style>
+</head>
+
+<body>
+    <h2>แผนภาพกระแสข้อมูลระดับที่ 0</h2>
+    <h3>ระบบจัดการแจ้งซ่อมเชิงพื้นที่</h3>
+    <svg width="1300" height="850" viewBox="0 0 1300 850">
+        <defs>
+            <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0,10 3.5,0 7" fill="#000" />
+            </marker>
+        </defs>
+
+        <!-- ===== CENTRAL PROCESS (Gane-Sarson) ===== -->
+        <rect x="450" y="300" width="400" height="180" fill="#fff" stroke="#000" stroke-width="2.5" />
+        <rect x="450" y="300" width="400" height="35" fill="#ddd" stroke="#000" stroke-width="2.5" />
+        <text x="650" y="324" text-anchor="middle" font-size="20" font-weight="700">0</text>
+        <text x="650" y="380" text-anchor="middle" font-size="18">ระบบจัดการ</text>
+        <text x="650" y="410" text-anchor="middle" font-size="18">แจ้งซ่อมเชิงพื้นที่</text>
+        <text x="650" y="440" text-anchor="middle" font-size="16" fill="#555">(Spatial Repair Management)</text>
+
+        <!-- ===== EXTERNAL ENTITIES ===== -->
+        <!-- ผู้ใช้งาน (top-left) -->
+        <rect x="50" y="50" width="160" height="55" fill="#fff" stroke="#000" stroke-width="2" />
+        <text x="130" y="84" text-anchor="middle" font-size="18" font-weight="600">ผู้ใช้งาน</text>
+
+        <!-- หัวหน้างาน (top-right) -->
+        <rect x="1080" y="50" width="170" height="55" fill="#fff" stroke="#000" stroke-width="2" />
+        <text x="1165" y="84" text-anchor="middle" font-size="18" font-weight="600">หัวหน้างาน</text>
+
+        <!-- ผู้ดูแลระบบ (bottom-left) -->
+        <rect x="50" y="680" width="170" height="55" fill="#fff" stroke="#000" stroke-width="2" />
+        <text x="135" y="714" text-anchor="middle" font-size="18" font-weight="600">ผู้ดูแลระบบ</text>
+
+        <!-- ช่างซ่อม (bottom-right) -->
+        <rect x="1080" y="680" width="160" height="55" fill="#fff" stroke="#000" stroke-width="2" />
+        <text x="1160" y="714" text-anchor="middle" font-size="18" font-weight="600">ช่างซ่อม</text>
+
+        <!-- ===== DATA FLOWS ===== -->
+
+        <!-- ========== ผู้ใช้งาน → ระบบ (3 flows, entering from top-left) ========== -->
+
+        <!-- Flow 1: ข้อมูลคำร้องแจ้งซ่อม -->
+        <line x1="210" y1="77" x2="370" y2="77" stroke="#000" stroke-width="1.5" />
+        <line x1="370" y1="77" x2="370" y2="350" stroke="#000" stroke-width="1.5" />
+        <line x1="370" y1="350" x2="448" y2="350" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="380" y="200" font-size="14">ข้อมูลคำร้องแจ้งซ่อม</text>
+
+        <!-- Flow 2: ข้อมูลลงทะเบียน -->
+        <line x1="130" y1="105" x2="130" y2="180" stroke="#000" stroke-width="1.5" />
+        <line x1="130" y1="180" x2="310" y2="180" stroke="#000" stroke-width="1.5" />
+        <line x1="310" y1="180" x2="310" y2="390" stroke="#000" stroke-width="1.5" />
+        <line x1="310" y1="390" x2="448" y2="390" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="140" y="175" font-size="14">ข้อมูลลงทะเบียน</text>
+
+        <!-- Flow 3: คำค้นหาอาคาร -->
+        <line x1="80" y1="105" x2="80" y2="240" stroke="#000" stroke-width="1.5" />
+        <line x1="80" y1="240" x2="250" y2="240" stroke="#000" stroke-width="1.5" />
+        <line x1="250" y1="240" x2="250" y2="430" stroke="#000" stroke-width="1.5" />
+        <line x1="250" y1="430" x2="448" y2="430" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="90" y="235" font-size="14">คำค้นหาอาคาร</text>
+
+        <!-- ========== ระบบ → ผู้ใช้งาน (3 flows, going to top-left) ========== -->
+
+        <!-- Flow 4: ผลลัพธ์/Token -->
+        <line x1="500" y1="300" x2="500" y2="50" stroke="#000" stroke-width="1.5" />
+        <line x1="500" y1="50" x2="212" y2="50" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="356" y="42" text-anchor="middle" font-size="14">Token, บทบาท, ผลลัพธ์การลงทะเบียน</text>
+
+        <!-- Flow 5: ข้อมูลพิกัด/รายการอาคาร -->
+        <line x1="450" y1="460" x2="430" y2="460" stroke="#000" stroke-width="1.5" />
+        <line x1="430" y1="460" x2="430" y2="100" stroke="#000" stroke-width="1.5" />
+        <line x1="430" y1="100" x2="212" y2="100" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="355" y="95" text-anchor="middle" font-size="14">ข้อมูลพิกัด, รายการอาคาร</text>
+
+        <!-- ========== หัวหน้างาน → ระบบ (2 flows, entering from top-right) ========== -->
+
+        <!-- Flow 6: ข้อมูลการมอบหมาย -->
+        <line x1="1080" y1="68" x2="920" y2="68" stroke="#000" stroke-width="1.5" />
+        <line x1="920" y1="68" x2="920" y2="350" stroke="#000" stroke-width="1.5" />
+        <line x1="920" y1="350" x2="852" y2="350" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="910" y="200" text-anchor="end" font-size="14">ข้อมูลการมอบหมาย</text>
+
+        <!-- Flow 7: ร้องขอดูรายงาน/สถิติ -->
+        <line x1="1165" y1="105" x2="1165" y2="180" stroke="#000" stroke-width="1.5" />
+        <line x1="1165" y1="180" x2="980" y2="180" stroke="#000" stroke-width="1.5" />
+        <line x1="980" y1="180" x2="980" y2="390" stroke="#000" stroke-width="1.5" />
+        <line x1="980" y1="390" x2="852" y2="390" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="975" y="175" text-anchor="end" font-size="14">ร้องขอดูรายงาน/สถิติ</text>
+
+        <!-- ========== ระบบ → หัวหน้างาน (2 flows, going to top-right) ========== -->
+
+        <!-- Flow 8: แจ้งเตือนคำร้องใหม่ -->
+        <line x1="800" y1="300" x2="800" y2="50" stroke="#000" stroke-width="1.5" />
+        <line x1="800" y1="50" x2="1078" y2="50" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="939" y="42" text-anchor="middle" font-size="14">แจ้งเตือนคำร้องใหม่</text>
+
+        <!-- Flow 9: ข้อมูลสถิติ/รายงาน -->
+        <line x1="850" y1="430" x2="860" y2="430" stroke="#000" stroke-width="1.5" />
+        <line x1="860" y1="430" x2="860" y2="95" stroke="#000" stroke-width="1.5" />
+        <line x1="860" y1="95" x2="1078" y2="95" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="970" y="90" text-anchor="middle" font-size="14">ข้อมูลสถิติ, รายงาน</text>
+
+        <!-- ========== ผู้ดูแลระบบ → ระบบ (3 flows, entering from bottom-left) ========== -->
+
+        <!-- Flow 10: ข้อมูลจัดการอาคาร -->
+        <line x1="220" y1="707" x2="370" y2="707" stroke="#000" stroke-width="1.5" />
+        <line x1="370" y1="707" x2="370" y2="460" stroke="#000" stroke-width="1.5" />
+        <line x1="370" y1="460" x2="448" y2="460" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="380" y="600" font-size="14">ข้อมูลจัดการอาคาร</text>
+
+        <!-- Flow 11: ข้อมูลจัดการผู้ใช้ -->
+        <line x1="135" y1="735" x2="135" y2="770" stroke="#000" stroke-width="1.5" />
+        <line x1="135" y1="770" x2="310" y2="770" stroke="#000" stroke-width="1.5" />
+        <line x1="310" y1="770" x2="310" y2="470" stroke="#000" stroke-width="1.5" />
+        <line x1="310" y1="470" x2="448" y2="470" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="140" y="765" font-size="14">ข้อมูลจัดการผู้ใช้</text>
+
+        <!-- Flow 12: ร้องขอดูรายการคำร้อง -->
+        <line x1="80" y1="735" x2="80" y2="810" stroke="#000" stroke-width="1.5" />
+        <line x1="80" y1="810" x2="250" y2="810" stroke="#000" stroke-width="1.5" />
+        <line x1="250" y1="810" x2="250" y2="475" stroke="#000" stroke-width="1.5" />
+        <line x1="250" y1="475" x2="448" y2="475" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="90" y="805" font-size="14">ร้องขอดูรายการ</text>
+
+        <!-- ========== ระบบ → ผู้ดูแลระบบ (2 flows, going to bottom-left) ========== -->
+
+        <!-- Flow 13: รายการคำร้อง/ข้อมูลผู้ใช้ -->
+        <line x1="500" y1="480" x2="500" y2="700" stroke="#000" stroke-width="1.5" />
+        <line x1="500" y1="700" x2="222" y2="700" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="361" y="692" text-anchor="middle" font-size="14">รายการคำร้อง, ข้อมูลผู้ใช้</text>
+
+        <!-- Flow 14: ผลลัพธ์การจัดการ -->
+        <line x1="450" y1="480" x2="450" y2="730" stroke="#000" stroke-width="1.5" />
+        <line x1="450" y1="730" x2="222" y2="730" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="336" y="725" text-anchor="middle" font-size="14">ผลลัพธ์การจัดการอาคาร</text>
+
+        <!-- ========== ช่างซ่อม → ระบบ (entering from bottom-right) ========== -->
+
+        <!-- Flow 15: ข้อมูลผลการซ่อม -->
+        <line x1="1080" y1="707" x2="920" y2="707" stroke="#000" stroke-width="1.5" />
+        <line x1="920" y1="707" x2="920" y2="460" stroke="#000" stroke-width="1.5" />
+        <line x1="920" y1="460" x2="852" y2="460" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="910" y="600" text-anchor="end" font-size="14">ข้อมูลผลการซ่อม</text>
+
+        <!-- ========== ระบบ → ช่างซ่อม (going to bottom-right) ========== -->
+
+        <!-- Flow 16: งานที่ได้รับมอบหมาย, แจ้งเตือนงานซ่อม -->
+        <line x1="850" y1="460" x2="980" y2="460" stroke="#000" stroke-width="1.5" />
+        <line x1="980" y1="460" x2="980" y2="700" stroke="#000" stroke-width="1.5" />
+        <line x1="980" y1="700" x2="1078" y2="700" stroke="#000" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="990" y="585" font-size="14">งานที่ได้รับมอบหมาย,</text>
+        <text x="990" y="605" font-size="14">แจ้งเตือนงานซ่อม</text>
+
+    </svg>
+</body>
+
+</html>
